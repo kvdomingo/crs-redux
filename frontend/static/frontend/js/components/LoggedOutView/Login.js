@@ -5,9 +5,14 @@ import {
     MDBCardBody as CardBody,
     MDBInput as Input,
 } from "mdbreact";
+import PropTypes from "prop-types";
 
 
 export default class Login extends Component {
+    static propTypes = {
+        handleLogin: PropTypes.func.isRequired,
+    }
+
     state = {
         username: "",
         password: "",
@@ -18,30 +23,42 @@ export default class Login extends Component {
         this.setState({ [name]: value });
     }
 
+    handleSubmit = e => {
+        e.preventDefault();
+        let { username, password } = this.state,
+            data = { username, password };
+        this.props.handleLogin(data)
+        this.setState({ username: "", password: "" });
+    }
+
     render() {
         return (
-            <Card style={{ boxShadow: "none", border: "1px solid #ddd" }}>
+            <Card className="kill-card-shadow">
                 <CardHeader>Login</CardHeader>
                 <CardBody>
-                    <form className="form">
+                    <form className="form" onSubmit={this.handleSubmit}>
                         <Input
                             label="Username"
                             type="email"
-                            icon="user"
+                            name="username"
                             group
                             validate
+                            onChange={this.handleChange}
+                            value={this.state.username}
                         />
                         <Input
                             label="Password"
                             type="password"
-                            icon="lock"
+                            name="password"
                             group
                             validate
+                            onChange={this.handleChange}
+                            value={this.state.password}
                         />
                         <input
                             type="submit"
                             value="Login"
-                            className="btn btn-primary"
+                            className="ml-0 btn btn-primary kill-shadow"
                         />
                     </form>
                 </CardBody>

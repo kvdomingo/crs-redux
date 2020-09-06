@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 import dj_database_url
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'webpack_loader',
+    'tinymce',
 ]
 
 MIDDLEWARE = [
@@ -92,6 +94,36 @@ WSGI_APPLICATION = 'crsredux.wsgi.application'
 DATABASES = {'default': dj_database_url.config()}
 
 
+# Rest API
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
+if not DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.jwt_response_handler',
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -123,6 +155,26 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# TinyMCE config
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'silver',
+    'plugins': 'link image preview codesample contextmenu table code lists',
+    'toolbar': 'formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent table | link image | codesample | preview code',
+    'toolbar_mode': 'wrap',
+    'contextmenu': 'formats | link image',
+    'menubar': False,
+    'inline': False,
+    'indentation': '20pt',
+    'keep_styles': True,
+    'statusbar': True,
+    'width': 'auto',
+    'height': 500,
+    'valid_elements': '*[*]',
+    'custom_elements': 'Node',
+}
 
 
 # Static files (CSS, JavaScript, Images)

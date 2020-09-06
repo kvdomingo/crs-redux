@@ -1,7 +1,7 @@
 import React, { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-const LoggedOutView = lazy(() => import('./LoggedOutView'));
+const LoggedOutView = lazy(() => import('./LoggedOutView/LoggedOutView'));
 
 const routes = [
     { path: "/", Component: LoggedOutView },

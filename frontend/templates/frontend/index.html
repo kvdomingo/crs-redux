@@ -1,3 +1,4 @@
+{% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,5 +10,7 @@
 </head>
 <body>
     <div id="root"></div>
+    {% render_bundle "main" %}
+    <noscript>Please enable JavaScript to view this page.</noscript>
 </body>
 </html>

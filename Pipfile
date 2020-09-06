@@ -13,6 +13,8 @@ python-dotenv = "*"
 gunicorn = "*"
 djangorestframework = "*"
 django-filter = "*"
+django-tinymce = "*"
+djangorestframework-jwt = "*"
 
 [requires]
 python_version = "3.7"

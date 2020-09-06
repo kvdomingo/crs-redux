@@ -1,22 +1,26 @@
 const path = require("path"),
-      HtmlWebpackPlugin = require("html-webpack-plugin"),
-      MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-      CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
+    HtmlWebpackPlugin = require("html-webpack-plugin"),
+    MiniCssExtractPlugin = require("mini-css-extract-plugin"),
+    CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 
 
 module.exports = {
     context: __dirname,
+    entry: {
+        main: ["./frontend/static/frontend/js/index"]
+    },
     module: {
         rules: [
             {
-                test: /\.js(x)?$/,
+                test: /\.(js|jsx)$/,
                 exclude: [
                     /node_modules/,
+                    /Content/,
                 ],
                 use: ["babel-loader"]
             },
             {
-                test: /\.s[ac]ss$/,
+                test: /\.s(a|c)ss$/,
                 use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
@@ -56,8 +60,5 @@ module.exports = {
             template: path.resolve(__dirname, "frontend/templates/frontend/index.html"),
             filename: "index.html"
         })
-    ],
-    resolve: {
-        extensions: [".js", ".jsx"]
-    }
+    ]
 };

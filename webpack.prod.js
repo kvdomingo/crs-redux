@@ -1,15 +1,14 @@
 const path = require("path"),
-      merge = require("webpack-merge"),
-      common = require("./webpack.common.js"),
-      MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-      CompressionPlugin = require("compression-webpack-plugin"),
-      BundleTracker = require("webpack-bundle-tracker"),
-      webpack = require("webpack");
+    merge = require("webpack-merge"),
+    common = require("./webpack.common.js"),
+    MiniCssExtractPlugin = require("mini-css-extract-plugin"),
+    CompressionPlugin = require("compression-webpack-plugin"),
+    BundleTracker = require("webpack-bundle-tracker"),
+    webpack = require("webpack");
 
 
 module.exports = merge(common, {
     context: __dirname,
-    entry: ["./frontend/static/frontend/js/index"],
     mode: "production",
     output: {
         path: path.resolve(__dirname, "frontend/static/frontend/bundles/"),
