@@ -6,21 +6,17 @@ const path = require("path"),
 
 module.exports = {
     context: __dirname,
-    entry: {
-        main: ["./frontend/static/frontend/js/index"]
-    },
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
+                test: /\.js(x)?$/,
                 exclude: [
                     /node_modules/,
-                    /Content/,
                 ],
                 use: ["babel-loader"]
             },
             {
-                test: /\.s(a|c)ss$/,
+                test: /\.s[ac]ss$/,
                 use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
@@ -60,5 +56,8 @@ module.exports = {
             template: path.resolve(__dirname, "frontend/templates/frontend/index.html"),
             filename: "index.html"
         })
-    ]
+    ],
+    resolve: {
+        extensions: [".js", ".jsx"]
+    }
 };

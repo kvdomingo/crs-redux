@@ -9,6 +9,7 @@ const path = require("path"),
 
 module.exports = merge(common, {
     context: __dirname,
+    entry: ["./frontend/static/frontend/js/index"],
     mode: "production",
     output: {
         path: path.resolve(__dirname, "frontend/static/frontend/bundles/"),
