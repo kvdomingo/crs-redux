@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import {
     MDBRow as Row,
     MDBCol as Col,
@@ -11,16 +10,12 @@ import Announcements from "./Announcements";
 
 
 export default class LoggedOutView extends Component {
-    static propTypes = {
-        handleLogin: PropTypes.func.isRequired,
-    }
-
     render() {
         return (
             <Container fluid className="p-5">
                 <Row className="flex-row-reverse">
                     <Col md="4">
-                        <Login handleLogin={this.props.handleLogin} />
+                        <Login loginChangeView={this.props.loginChangeView} />
 
                         <Type tag="h3" variant="h5-responsive" className="mt-4">
                             Sign in problems?

@@ -50,7 +50,7 @@ export default class Announcements extends Component {
                                     <hr className="my-4" />
                                 </Fragment>
                             ))
-                            : <p>No announcements to show</p>
+                            : <p className="text-center">No announcements to show</p>
                     }
                 </CardBody>
             </Card>

@@ -5,14 +5,9 @@ import {
     MDBCardBody as CardBody,
     MDBInput as Input,
 } from "mdbreact";
-import PropTypes from "prop-types";
 
 
 export default class Login extends Component {
-    static propTypes = {
-        handleLogin: PropTypes.func.isRequired,
-    }
-
     state = {
         username: "",
         password: "",
@@ -25,10 +20,19 @@ export default class Login extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        let { username, password } = this.state,
-            data = { username, password };
-        this.props.handleLogin(data)
-        this.setState({ username: "", password: "" });
+        let { username, password } = this.state;
+        fetch("/api/auth/token/obtain", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+        })
+            .then(res => res.json())
+            .then(res => {
+                localStorage.setItem("token", res.token);
+                this.props.loginChangeView(res.user);
+            });
     }
 
     render() {
@@ -39,7 +43,7 @@ export default class Login extends Component {
                     <form className="form" onSubmit={this.handleSubmit}>
                         <Input
                             label="Username"
-                            type="email"
+                            type="text"
                             name="username"
                             group
                             validate

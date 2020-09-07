@@ -5,7 +5,7 @@ from .serializers import *
 
 
 class CurrentUser(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
@@ -13,7 +13,7 @@ class CurrentUser(APIView):
 class UserList(APIView):
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request, format=None):
+    def post(self, request, format='json'):
         serializer = UserSerializerWithToken(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -25,7 +25,14 @@ class UserList(APIView):
 class AnnouncementList(APIView):
     permission_classes = [permissions.AllowAny]
 
-    def get(self, request, format=None):
+    def get(self, request):
         announcements = Announcement.objects.all()
         serializer = AnnouncementSerializer(announcements, many=True)
+        return Response(serializer.data)
+
+
+class DelinquencyList(APIView):
+    def get(self, request):
+        delinquencies = UserProfile.objects.get(username=request.user.username).delinquencies.filter(settled=False)
+        serializer = DelinquencySerializer(delinquencies, many=True)
         return Response(serializer.data)

@@ -4,6 +4,7 @@ from .models import *
 
 admin.site.register(UserProfile)
 admin.site.register(Announcement)
+admin.site.register(Delinquency)
 
 admin.site.index_title = 'Admin'
 admin.site.site_title = 'UP Computerized Registration System'

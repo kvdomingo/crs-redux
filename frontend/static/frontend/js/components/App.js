@@ -2,56 +2,65 @@ import React, {Component, lazy, Suspense} from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Loading from "./Loading";
 import Navigation from "./Navigation";
+import Footer from "./Footer";
 
-const LoggedOutView = lazy(() => import('./LoggedOutView/LoggedOutView'));
+const LoggedOutView = lazy(() => import("./LoggedOutView/LoggedOutView")),
+      LoggedInView = lazy(() => import("./LoggedInView/LoggedInView"));
 
 
 export default class App extends Component {
     state = {
-        loggedIn: !!(localStorage.getItem('token')),
-        userData: "",
+        loggedIn: !!(localStorage.getItem("token")),
+        userData: [],
     }
 
-    handleLogin = data => {
-        let { username, password } = data;
-        fetch("/api/auth/token-auth", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password})
-        })
-            .then(res => res.json())
-            .then(data => {
-                localStorage.setItem("token", data.token);
-                this.setState({
-                    userData: data,
-                    loggedIn: true,
+    componentDidMount() {
+        if (this.state.loggedIn) {
+            fetch("/api/auth/user/current", {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem("token")}`,
+                },
+            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.detail) {
+                        localStorage.removeItem("token");
+                        this.setState({ loggedIn: false, userData: [] });
+                    } else {
+                        this.setState({
+                            loggedIn: true,
+                            userData: res,
+                        })
+                    }
                 });
-            });
+        }
     }
 
-    handleLogout = () => {
-        localStorage.removeItem("token");
-        this.setState({ loggedIn: false, userData: "" });
+    loginChangeView = userData => {
+        this.setState({ loggedIn: true, userData });
+    }
+
+    logoutChangeView = () => {
+        this.setState({ loggedIn: false, userData: [] });
     }
 
     render() {
         return (
             <Router>
-                <Navigation />
+                <Navigation logoutChangeView={this.logoutChangeView} userData={this.state.userData} />
                 <Suspense fallback={<Loading />}>
                     <Switch>
                         <Route
-                            exact path="/"
+                            path="/"
                             render={() => (
-                                <LoggedOutView
-                                    handleLogin={this.handleLogin}
-                                />
+                                (this.state.loggedIn)
+                                    ? <LoggedInView userData={this.state.userData} />
+                                    : <LoggedOutView loginChangeView={this.loginChangeView} />
                             )}
                         />
                     </Switch>
                 </Suspense>
+                <Footer />
             </Router>
         );
     }

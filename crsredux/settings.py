@@ -118,10 +118,15 @@ if not DEBUG:
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.jwt_response_handler',
-    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_EXPIRATION_DELTA': timedelta(hours=6),
     'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
 }
+
+
+# Custom user model
+
+AUTH_USER_MODEL = "backend.UserProfile"
 
 
 # Password validation
