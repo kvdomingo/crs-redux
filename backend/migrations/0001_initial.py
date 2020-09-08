@@ -13,10 +13,6 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('auth', '0014_auto_20200907_2122'),
-    ]
-
     operations = [
         migrations.CreateModel(
             name='UserProfile',
