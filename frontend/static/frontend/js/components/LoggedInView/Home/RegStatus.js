@@ -13,15 +13,30 @@ import {
 
 
 export default class RegStatus extends Component {
+    state = {
+        delinquencies: false,
+        status: {
+            registration_status: "",
+            preenlistment_priority: "",
+            registration_priority: "",
+            academic_eligibility: "",
+            accountability_status: "",
+        },
+    }
+
+    componentDidMount() {
+        fetch("/api/delinquencies")
+            .then(res => res.json())
+            .then(res => (res.length > 0) ? this.setState({ delinquencies: true }) : null);
+
+        fetch("/api/user-status")
+            .then(res => res.json())
+            .then(status => this.setState({ status }));
+    }
+
     render() {
         let { userData } = this.props,
-            priorityChoices = {
-                LOW: "Low",
-                REG: "Regular",
-                FST: "Freshman",
-                GRD: "Graduating",
-                CCO: "Cadet Officer",
-            };
+            { status } = this.state;
 
         return (
             <div>
@@ -39,7 +54,7 @@ export default class RegStatus extends Component {
                                     <Col>Registration status</Col>
                                     <Col className="text-md-right text-left">
                                         <h4>
-                                            {(userData.registration_status)
+                                            {(status.registration_status)
                                                 ? <Badge
                                                     color="success"
                                                     className="ml-3 kill-shadow"
@@ -66,7 +81,7 @@ export default class RegStatus extends Component {
                                                 color="info"
                                                 className="ml-3 kill-shadow"
                                             >
-                                                {priorityChoices[userData.preenlistment_priority]}
+                                                {status.preenlistment_priority}
                                             </Badge>
                                         </h4>
                                     </Col>
@@ -81,7 +96,7 @@ export default class RegStatus extends Component {
                                                 color="info"
                                                 className="ml-3 kill-shadow"
                                             >
-                                                {priorityChoices[userData.registration_priority]}
+                                                {status.registration_priority}
                                             </Badge>
                                         </h4>
                                     </Col>
@@ -92,7 +107,7 @@ export default class RegStatus extends Component {
                                     <Col>Academic eligibility</Col>
                                     <Col className="text-md-right text-left">
                                         <h4>
-                                            {(userData.academic_eligibility)
+                                            {(status.academic_eligibility)
                                                 ? <Badge
                                                     color="success"
                                                     className="ml-3 kill-shadow"
@@ -115,7 +130,7 @@ export default class RegStatus extends Component {
                                     <Col>Accountability status</Col>
                                     <Col className="text-md-right text-left">
                                         <h4>
-                                            {(userData.accountability_status)
+                                            {(status.accountability_status)
                                                 ? <Badge
                                                     color="success"
                                                     className="ml-3 kill-shadow"
@@ -138,7 +153,7 @@ export default class RegStatus extends Component {
                                     <Col>Deficiencies</Col>
                                     <Col className="text-md-right text-left">
                                         <h4>
-                                            {(userData.deficiencies)
+                                            {(this.state.delinquencies)
                                                 ? <Badge
                                                     color="danger"
                                                     className="ml-3 kill-shadow"

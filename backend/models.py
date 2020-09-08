@@ -10,6 +10,46 @@ class UserProfile(AbstractUser):
         ('SF', 'Staff')
     ]
 
+    LIFE_STATUS_CHOICES = [
+        ('', ''),
+        ('A', 'Alive'),
+        ('D', 'Deceased'),
+        ('U', 'Unknown'),
+    ]
+
+    DISABILITY_CHOICES = [
+        ('N/A', 'None'),
+        ('VIS', 'Visual'),
+        ('AUD', 'Auditory'),
+        ('PSY', 'Psychological'),
+        ('PHY', 'Physical'),
+    ]
+
+    middle_name = models.CharField(max_length=32, blank=True)
+    birthday = models.DateField(blank=True, null=True)
+    mobile_number = models.CharField(max_length=16, blank=True)
+    telephone_number = models.CharField(max_length=16, blank=True)
+    user_status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, null=True)
+    course = models.CharField(max_length=64, blank=True, null=True)
+    disability = models.BooleanField(default=False)
+    disability_type = models.CharField(max_length=3, choices=DISABILITY_CHOICES, default='N/A')
+    disability_details = models.CharField(max_length=32, blank=True)
+    present_address = models.TextField(blank=True)
+    permanent_address = models.TextField(blank=True)
+    father_status = models.CharField(max_length=1, choices=LIFE_STATUS_CHOICES, default='')
+    father_first_name = models.CharField(max_length=32, blank=True)
+    father_middle_name = models.CharField(max_length=32, blank=True)
+    father_last_name = models.CharField(max_length=32, blank=True)
+    mother_status = models.CharField(max_length=1, choices=LIFE_STATUS_CHOICES, default='')
+    mother_first_name = models.CharField(max_length=32, blank=True)
+    mother_maiden_middle_name = models.CharField(max_length=32, blank=True)
+    mother_maiden_last_name = models.CharField(max_length=32, blank=True)
+
+    def __str__(self):
+        return f"{self.registration_status.student_number} {self.last_name}, {self.first_name} ({self.email})"
+
+
+class UserRegistrationStatus(models.Model):
     PRIORITY_CHOICES = [
         ('LOW', 'Low'),
         ('REG', 'Regular'),
@@ -18,21 +58,20 @@ class UserProfile(AbstractUser):
         ('CCO', 'Cadet Officer'),
     ]
 
-    middle_name = models.CharField(max_length=32, blank=True)
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='registration_status', blank=True)
     student_number = models.PositiveIntegerField(unique=True, blank=True, null=True)
-    birthday = models.DateField(blank=True, null=True)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, null=True)
-    course = models.CharField(max_length=64, blank=True, null=True)
     registration_status = models.BooleanField(default=False)
-    preenlistment_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES)
-    registration_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES)
+    preenlistment_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES, default='REG')
+    registration_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES, default='REG')
     academic_eligibility = models.BooleanField(default=True)
     accountability_status = models.BooleanField(default=True)
-    deficiencies = models.BooleanField(default=False)
     scholarship = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.student_number} {self.last_name}, {self.first_name} ({self.email})"
+        return f"{self.student_number} {self.user.last_name}, {self.user.first_name} ({self.user.email})"
+
+    class Meta:
+        verbose_name_plural = 'User registration status'
 
 
 class Announcement(models.Model):

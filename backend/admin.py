@@ -2,7 +2,14 @@ from django.contrib import admin
 from .models import *
 
 
-admin.site.register(UserProfile)
+class UserRegistrationInline(admin.StackedInline):
+    model = UserRegistrationStatus
+
+class UserProfileAdmin(admin.ModelAdmin):
+    inlines = [UserRegistrationInline]
+
+
+admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Announcement)
 admin.site.register(Delinquency)
 

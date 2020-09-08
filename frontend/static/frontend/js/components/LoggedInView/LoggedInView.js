@@ -23,6 +23,7 @@ class LoggedInView extends Component {
     state = {
         activeTab: window.location.pathname,
         time: dateFormat(new Date(), "h:MM tt"),
+        userData: [],
     }
 
     componentDidMount() {

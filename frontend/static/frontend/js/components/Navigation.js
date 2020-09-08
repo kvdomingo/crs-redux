@@ -28,7 +28,7 @@ export default class Navigation extends Component {
 
     render() {
         return (
-            <Navbar dark color="red darken-4" expand="md">
+            <Navbar dark color="red darken-4" expand="md" className="kill-shadow">
                 <NavbarBrand>
                     <Link to="/">
                         <img
@@ -57,7 +57,7 @@ export default class Navigation extends Component {
                                 </NavItem>
                                 <NavItem>
                                     <div className="text-white d-flex h-100 align-items-center mx-2">
-                                        SN&nbsp;{this.props.userData.student_number}
+                                        SN&nbsp;{this.props.userStatus.student_number}
                                     </div>
                                 </NavItem>
                                 <NavItem>

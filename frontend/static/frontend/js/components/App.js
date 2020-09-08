@@ -12,6 +12,7 @@ export default class App extends Component {
     state = {
         loggedIn: !!(localStorage.getItem("token")),
         userData: [],
+        userStatus: [],
     }
 
     componentDidMount() {
@@ -33,6 +34,10 @@ export default class App extends Component {
                         })
                     }
                 });
+
+            fetch("/api/user-status")
+                .then(res => res.json())
+                .then(userStatus => this.setState({ userStatus }));
         }
     }
 
@@ -47,7 +52,11 @@ export default class App extends Component {
     render() {
         return (
             <Router>
-                <Navigation logoutChangeView={this.logoutChangeView} userData={this.state.userData} />
+                <Navigation
+                    logoutChangeView={this.logoutChangeView}
+                    userData={this.state.userData}
+                    userStatus={this.state.userStatus}
+                />
                 <Suspense fallback={<Loading />}>
                     <Switch>
                         <Route
