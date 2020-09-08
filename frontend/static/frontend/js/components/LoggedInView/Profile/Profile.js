@@ -6,6 +6,8 @@ import {
     MDBInput as Input,
     MDBListGroup as ListGroup,
     MDBListGroupItem as ListGroupItem,
+    MDBRow as Row,
+    MDBCol as Col,
 } from "mdbreact";
 
 
@@ -36,29 +38,35 @@ export default class Profile extends Component {
                         <form className="form" onSubmit={this.handleSubmit}>
                             <ListGroup>
                                 <ListGroupItem>
-                                    <Input
-                                        label="First name"
-                                        name="first_name"
-                                        type="text"
-                                        value={this.state.first_name}
-                                        onChange={this.handleChange}
-                                        validate
-                                    />
-                                    <Input
-                                        label="Middle name (optional)"
-                                        name="middle_name"
-                                        type="text"
-                                        value={this.state.middle_name}
-                                        onChange={this.handleChange}
-                                    />
-                                    <Input
-                                        label="Last name"
-                                        name="last_name"
-                                        type="text"
-                                        value={this.state.last_name}
-                                        onChange={this.handleChange}
-                                        validate
-                                    />
+                                    <Row>
+                                        <Col className="form-group">
+                                            <label
+                                                htmlFor="first_name"
+                                                className="font-weight-bold"
+                                            >
+                                                First name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="first_name"
+                                                value={this.state.first_name}
+                                                onChange={this.handleChange}
+                                                required
+                                            />
+                                        </Col>
+                                        <Col className="form-group">
+                                            <label htmlFor="middle_name">Middle name</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="middle_name"
+                                                value={this.state.middle_name}
+                                                onChange={this.handleChange}
+                                                required
+                                            />
+                                        </Col>
+                                    </Row>
                                 </ListGroupItem>
                             </ListGroup>
                         </form>

@@ -7,9 +7,9 @@ import {
     MDBNavbarToggler as NavbarToggler,
     MDBBtn as Button,
     MDBCollapse as Collapse,
+    MDBTypography as Type,
 } from "mdbreact";
 import { Link } from "react-router-dom";
-import dateFormat from "dateformat";
 
 
 export default class Navigation extends Component {
@@ -33,7 +33,7 @@ export default class Navigation extends Component {
                     <Link to="/">
                         <img
                             src="https://upload.wikimedia.org/wikipedia/en/3/3d/University_of_The_Philippines_seal.svg"
-                            height={100}
+                            height={80}
                             alt="UP logo"
                         />
                     </Link>
@@ -42,11 +42,9 @@ export default class Navigation extends Component {
                 <Collapse isOpen={this.state.isOpen} navbar>
                     <NavbarNav left>
                         <NavItem>
-                            <div className="text-white d-flex h-100 align-items-center text-center mx-2">
-                                {dateFormat(new Date(), "dddd, d mmmm yyyy")}
-                                <br />
-                                {dateFormat(new Date(), "h:MM tt")}
-                            </div>
+                            <Type tag="h1" variant="h5-responsive text-white d-flex h-100 align-items-center">
+                                UP Computerized Registration System
+                            </Type>
                         </NavItem>
                     </NavbarNav>
                     <NavbarNav right>

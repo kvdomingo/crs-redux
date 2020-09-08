@@ -7,6 +7,7 @@ import {
 } from "mdbreact";
 import { Link } from "react-router-dom";
 import { Switch, Route, withRouter } from "react-router-dom";
+import dateFormat from "dateformat";
 
 const Home = lazy(() => import("./Home/Home")),
       Profile = lazy(() => import("./Profile/Profile"));
@@ -21,10 +22,23 @@ const tabs = [
 class LoggedInView extends Component {
     state = {
         activeTab: window.location.pathname,
+        time: dateFormat(new Date(), "h:MM tt"),
+    }
+
+    componentDidMount() {
+        this.timeId = setInterval(() => this.tick(), 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timeId);
     }
 
     togglePills = activeTab => e => {
         this.setState({ activeTab });
+    }
+
+    tick = () => {
+        this.setState({ time: dateFormat(new Date(), "h:MM tt") })
     }
 
     render() {
@@ -32,6 +46,12 @@ class LoggedInView extends Component {
             <Container fluid className="p-4 mt-4">
                 <Row>
                     <Col md="2">
+                        <div className="text-center mb-3">
+                            <small>
+                                {dateFormat(new Date(), "dddd, d mmmm yyyy")} <br />
+                                {this.state.time}
+                            </small>
+                        </div>
                         <Nav
                             tag="div"
                             className="nav-pills flex-column text-md-left text-center"
