@@ -11,4 +11,5 @@ urlpatterns = [
     path('user-status', views.CurrentUserStatus.as_view()),
     path('announcements', views.AnnouncementList.as_view()),
     path('delinquencies', views.DelinquencyList.as_view()),
+    path('academic-years', views.AcademicYearList.as_view()),
 ]

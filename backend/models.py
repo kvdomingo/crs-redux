@@ -106,4 +106,65 @@ class Delinquency(models.Model):
         verbose_name_plural = 'Delinquencies'
 
     def __str__(self):
-        return f"{self.user.student_number} ({self.user.last_name}, {self.user.first_name}) {' '.join(self.details.split(' ')[:10])}..."
+        summary = ' '.join(self.details.split(' ')[:10])
+        return f"{self.user.student_number} ({self.user.last_name}, {self.user.first_name}) {summary}..."
+
+
+class AcademicYear(models.Model):
+    SEMESTER_CHOICES = [
+        (1, 'First Semester'),
+        (2, 'Second Semester'),
+        (3, 'Midyear'),
+    ]
+
+    semester = models.PositiveSmallIntegerField(choices=SEMESTER_CHOICES)
+    start_year = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ['-start_year', '-semester']
+
+    def __str__(self):
+        return f"{dict(self.SEMESTER_CHOICES)[self.semester]}, A.Y. {self.start_year}-{self.start_year + 1}"
+
+
+class EnlistingUnit(models.Model):
+    code = models.CharField(max_length=16)
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f"{self.code} {self.name}"
+
+    class Meta:
+        ordering = ['code']
+
+
+class Instructor(models.Model):
+    first_name = models.CharField(max_length=32)
+    last_name = models.CharField(max_length=32)
+    department = models.ForeignKey(EnlistingUnit, on_delete=models.SET_NULL, related_name='instructors', null=True)
+
+    def __str__(self):
+        return f"{self.department.code} {self.last_name}, {self.first_name}"
+
+    class Meta:
+        ordering = ['department__code', 'last_name', 'first_name']
+
+
+class RegularClass(models.Model):
+    class_code = models.PositiveIntegerField(unique=True)
+    course_code = models.CharField(max_length=32)
+    number = models.PositiveSmallIntegerField()
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    credits = models.FloatField()
+    schedule = models.CharField(max_length=32)
+    instructor = models.ManyToManyField(Instructor, related_name='classes')
+    total_slots = models.PositiveSmallIntegerField()
+    restrictions = models.TextField()
+
+    def __str__(self):
+        return f"{self.class_code} {self.course_code} {self.number} {self.schedule}"
+
+    class Meta:
+        ordering = ['-class_code']
+        verbose_name_plural = 'Regular classes'

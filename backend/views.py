@@ -54,3 +54,12 @@ class DelinquencyList(APIView):
         delinquencies = UserProfile.objects.get(username=request.user.username).delinquencies.filter(settled=False)
         serializer = DelinquencySerializer(delinquencies, many=True)
         return Response(serializer.data)
+
+
+class AcademicYearList(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        academic_years = AcademicYear.objects.all()[:3]
+        serializer = AcademicYearSerializer(academic_years, many=True)
+        return Response(serializer.data)

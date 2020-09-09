@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import Helmet from "react-helmet";
 import {
     MDBCard as Card,
     MDBCardBody as CardBody,
@@ -76,6 +77,10 @@ export default class Profile extends Component {
 
         return (
             <div>
+                <Helmet>
+                    <title>Profile | UP Computerized Registration System</title>
+                </Helmet>
+
                 <Card className="kill-card-shadow">
                     <CardBody>
                         <form className="form" onSubmit={this.handleSubmit}>

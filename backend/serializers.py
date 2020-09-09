@@ -13,9 +13,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = '__all__'
         extra_kwargs = {
-            'password': {
-                'write_only': True
-            }
+            'password': {'write_only': True},
+            'is_superuser': {'write_only': True},
+            'is_staff': {'write_only': True},
+            'is_active': {'write_only': True},
+            'date_joined': {'write_only': True},
+            'last_login': {'write_only': True},
+            'groups': {'write_only': True},
+            'user_permissions': {'write_only': True},
         }
 
     def get_user_status(self, obj):
@@ -85,3 +90,15 @@ class DelinquencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Delinquency
         fields = '__all__'
+
+
+class AcademicYearSerializer(serializers.ModelSerializer):
+    semester = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AcademicYear
+        fields = '__all__'
+
+    def get_semester(self, obj):
+        semester_choices = dict(obj.SEMESTER_CHOICES)
+        return semester_choices[obj.semester]

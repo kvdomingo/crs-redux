@@ -48,9 +48,6 @@ export default class RegStatus extends Component {
 
         return (
             <div>
-                <Type tag="h1" variant="h2-responsive" className="mb-4">
-                    Student homepage for {userData.username}
-                </Type>
                 <Card className="kill-card-shadow">
                     <CardHeader className="text-uppercase font-weight-bold">
                         First Semester AY 2020-2021

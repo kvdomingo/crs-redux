@@ -88,7 +88,7 @@ export default class PersonalInfo extends Component {
                     <TextField
                         value={userData.disability_details}
                         name="disability_details"
-                        handleChange={this.handleChange}
+                        handleChange={handleChange}
                     />
                 </CardBody>
             </Card>

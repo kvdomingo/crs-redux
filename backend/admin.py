@@ -12,6 +12,10 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Announcement)
 admin.site.register(Delinquency)
+admin.site.register(AcademicYear)
+admin.site.register(EnlistingUnit)
+admin.site.register(Instructor)
+admin.site.register(RegularClass)
 
 admin.site.index_title = 'Admin'
 admin.site.site_title = 'UP Computerized Registration System'
