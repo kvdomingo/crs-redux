@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import {
     MDBRow as Row,
     MDBCol as Col,
@@ -10,6 +11,10 @@ import Announcements from "./Announcements";
 
 
 export default class LoggedOutView extends Component {
+    static propTypes = {
+        loginChangeView: PropTypes.func.isRequired,
+    }
+
     render() {
         return (
             <Container fluid className="p-5">

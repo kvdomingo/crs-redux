@@ -1,11 +1,11 @@
 import React, {Component} from "react";
 import {
     MDBCard as Card,
-    MDBCardHeader as CardHeader,
     MDBCardBody as CardBody,
-    MDBRow as Row,
-    MDBCol as Col,
 } from "mdbreact";
+import PersonalInfo from "./Sections/PersonalInfo";
+import ContactInfo from "./Sections/ContactInfo";
+import FamilyInfo from "./Sections/FamilyInfo";
 
 
 export default class Profile extends Component {
@@ -79,143 +79,38 @@ export default class Profile extends Component {
                 <Card className="kill-card-shadow">
                     <CardBody>
                         <form className="form" onSubmit={this.handleSubmit}>
-                            <Card className="kill-card-shadow mb-3">
-                                <CardHeader>Student information</CardHeader>
-                                <CardBody>
-                                    <Row>
-                                        <Col className="form-group">
-                                            <label
-                                                htmlFor="first_name"
-                                                className="font-weight-bold"
-                                            >
-                                                First name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                name="first_name"
-                                                value={userData.first_name}
-                                                onChange={this.handleChange}
-                                                required
-                                            />
-                                        </Col>
-                                        <Col className="form-group">
-                                            <label htmlFor="middle_name">Middle name</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                name="middle_name"
-                                                value={userData.middle_name}
-                                                onChange={this.handleChange}
-                                                required
-                                            />
-                                        </Col>
-                                        <Col className="form-group">
-                                            <label
-                                                htmlFor="last_name"
-                                                className="font-weight-bold"
-                                            >
-                                                Last name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                name="last_name"
-                                                value={userData.last_name}
-                                                onChange={this.handleChange}
-                                                required
-                                            />
-                                        </Col>
-                                    </Row>
-
-                                    <div className="form-group custom-control custom-checkbox">
-                                        <input
-                                            className="custom-control-input"
-                                            name="disability"
-                                            id="disability"
-                                            type="checkbox"
-                                            checked={userData.disability}
-                                            value={userData.disability}
-                                            onChange={this.toggleCheck}
-                                        />
-                                        <label
-                                            htmlFor="disability"
-                                            className="custom-control-label"
-                                        >
-                                            With disabilities
-                                        </label>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="disability_type">Disability type</label>
-                                        <select
-                                            className="browser-default custom-select"
-                                            name="disability_type"
-                                            value={userData.disability_type}
-                                            onChange={this.handleChange}
-                                            placeholder="Disability type"
-                                            disabled={!userData.disability}
-                                        >
-                                            <option value="N/A">None</option>
-                                            <option value="VIS">Visual</option>
-                                            <option value="AUD">Auditory</option>
-                                            <option value="PSY">Psychological</option>
-                                            <option value="PHY">Physical</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="disability_details">Disability details</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="disability_details"
-                                            value={userData.disability_details}
-                                            onChange={this.handleChange}
-                                            disabled={!userData.disability}
-                                        />
-                                    </div>
-                                </CardBody>
-                            </Card>
-
-                            <Card className="kill-card-shadow mb-3">
-                                <CardHeader>Contact information</CardHeader>
-                                <CardBody>
-                                    <Row>
-                                        <Col className="form-group">
-                                            <label
-                                                htmlFor="mobile_number"
-                                                className="font-weight-bold"
-                                            >
-                                                Mobile number
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                name="mobile_number"
-                                                value={userData.mobile_number}
-                                                onChange={this.handleChange}
-                                                required
-                                            />
-                                        </Col>
-                                    </Row>
-                                </CardBody>
-                            </Card>
-
-                            <div className="note note-success mt-4" hidden={!this.state.updateSuccessful}>
-                                Changes saved successfully.
-                            </div>
-                            <div className="note note-danger mt-4" hidden={!this.state.updateFailed}>
-                                An error occurred. Please try again later.
-                            </div>
-
-                            <div className="text-center">
-                                <input
-                                    className="btn btn-primary kill-shadow ml-0 mt-4"
-                                    type="submit"
-                                    value="Submit"
+                            <section>
+                                <PersonalInfo
+                                    userData={userData}
+                                    handleChange={this.handleChange}
+                                    toggleCheck={this.toggleCheck}
                                 />
-                            </div>
+                            </section>
+
+                            <section>
+                                <ContactInfo userData={userData} handleChange={this.handleChange} />
+                            </section>
+
+                            <section>
+                                <FamilyInfo userData={userData} handleChange={this.handleChange} />
+                            </section>
+
+                            <section>
+                                <div className="note note-success mt-4" hidden={!this.state.updateSuccessful}>
+                                    Changes saved successfully.
+                                </div>
+                                <div className="note note-danger mt-4" hidden={!this.state.updateFailed}>
+                                    An error occurred. Please try again later.
+                                </div>
+
+                                <div className="text-center">
+                                    <input
+                                        className="btn btn-primary kill-shadow ml-0 mt-4"
+                                        type="submit"
+                                        value="Submit"
+                                    />
+                                </div>
+                            </section>
                         </form>
                     </CardBody>
                 </Card>

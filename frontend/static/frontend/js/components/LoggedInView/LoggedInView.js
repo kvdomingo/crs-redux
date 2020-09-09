@@ -1,4 +1,5 @@
 import React, {Component, lazy} from "react";
+import PropTypes from "prop-types";
 import {
     MDBContainer as Container,
     MDBRow as Row,
@@ -10,7 +11,8 @@ import { Switch, Route, withRouter } from "react-router-dom";
 import dateFormat from "dateformat";
 
 const Home = lazy(() => import("./Home/Home")),
-      Profile = lazy(() => import("./Profile/Profile"));
+      Profile = lazy(() => import("./Profile/Profile")),
+      Handle404 = lazy(() => import("../Handle404"));
 
 const tabs = [
     { path: "/", name: "Home" },
@@ -20,6 +22,10 @@ const tabs = [
 
 
 class LoggedInView extends Component {
+    static propTypes = {
+        userData: PropTypes.object.isRequired,
+    }
+
     state = {
         activeTab: window.location.pathname,
         time: dateFormat(new Date(), "h:MM tt"),
@@ -84,6 +90,8 @@ class LoggedInView extends Component {
                                     <Profile userData={this.props.userData} />
                                 )}
                             />
+
+                            <Route component={Handle404} status={404} />
                         </Switch>
                     </Col>
                 </Row>

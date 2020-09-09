@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {
     MDBCard as Card,
     MDBCardHeader as CardHeader,
@@ -8,6 +9,10 @@ import {
 
 
 export default class Login extends Component {
+    static propTypes = {
+        loginChangeView: PropTypes.func.isRequired,
+    }
+
     state = {
         username: "",
         password: "",

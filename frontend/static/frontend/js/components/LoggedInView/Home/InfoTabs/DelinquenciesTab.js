@@ -13,7 +13,11 @@ export default class DelinquenciesTab extends Component {
     }
 
     componentDidMount() {
-        fetch("/api/delinquencies")
+        fetch("/api/delinquencies", {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem("token")}`,
+            }
+        })
             .then(res => res.json())
             .then(data => this.setState({ data }));
     }

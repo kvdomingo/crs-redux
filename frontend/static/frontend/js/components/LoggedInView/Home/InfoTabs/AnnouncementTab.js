@@ -15,7 +15,11 @@ export default class AnnouncementTab extends Component {
     }
 
     componentDidMount() {
-        fetch("/api/announcements")
+        fetch("/api/announcements", {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem("token")}`,
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 let data = res;

@@ -25,11 +25,19 @@ export default class RegStatus extends Component {
     }
 
     componentDidMount() {
-        fetch("/api/delinquencies")
+        fetch("/api/delinquencies", {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem("token")}`,
+            },
+        })
             .then(res => res.json())
             .then(res => (res.length > 0) ? this.setState({ delinquencies: true }) : null);
 
-        fetch("/api/user-status")
+        fetch("/api/user-status", {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem("token")}`,
+            },
+        })
             .then(res => res.json())
             .then(status => this.setState({ status }));
     }

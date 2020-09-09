@@ -5,7 +5,8 @@ import Navigation from "./Navigation";
 import Footer from "./Footer";
 
 const LoggedOutView = lazy(() => import("./LoggedOutView/LoggedOutView")),
-      LoggedInView = lazy(() => import("./LoggedInView/LoggedInView"));
+      LoggedInView = lazy(() => import("./LoggedInView/LoggedInView")),
+      Handle404 = lazy(() => import("./Handle404"));
 
 
 export default class App extends Component {
@@ -57,18 +58,22 @@ export default class App extends Component {
                     userData={this.state.userData}
                     userStatus={this.state.userStatus}
                 />
-                <Suspense fallback={<Loading />}>
-                    <Switch>
-                        <Route
-                            path="/"
-                            render={() => (
-                                (this.state.loggedIn)
-                                    ? <LoggedInView userData={this.state.userData} />
-                                    : <LoggedOutView loginChangeView={this.loginChangeView} />
-                            )}
-                        />
-                    </Switch>
-                </Suspense>
+                <main>
+                    <Suspense fallback={<Loading />}>
+                        <Switch>
+                            <Route
+                                path="/"
+                                render={() => (
+                                    (this.state.loggedIn)
+                                        ? <LoggedInView userData={this.state.userData} />
+                                        : <LoggedOutView loginChangeView={this.loginChangeView} />
+                                )}
+                            />
+
+                            <Route component={Handle404} status={404} />
+                        </Switch>
+                    </Suspense>
+                </main>
                 <Footer />
             </Router>
         );
