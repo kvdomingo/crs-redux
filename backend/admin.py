@@ -5,6 +5,7 @@ from .models import *
 class UserRegistrationInline(admin.StackedInline):
     model = UserRegistrationStatus
 
+
 class UserProfileAdmin(admin.ModelAdmin):
     inlines = [UserRegistrationInline]
 

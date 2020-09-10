@@ -5,7 +5,6 @@ from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
-    user_status = serializers.SerializerMethodField()
     father_status = serializers.SerializerMethodField()
     mother_status = serializers.SerializerMethodField()
 
@@ -23,10 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
             'user_permissions': {'write_only': True},
         }
 
-    def get_user_status(self, obj):
-        status_choices = dict(obj.STATUS_CHOICES)
-        return status_choices[obj.user_status]
-
     def get_father_status(self, obj):
         life_status_choices = dict(obj.LIFE_STATUS_CHOICES)
         return life_status_choices[obj.father_status]
@@ -37,12 +32,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserStatusSerializer(serializers.ModelSerializer):
+    user_status = serializers.SerializerMethodField()
     preenlistment_priority = serializers.SerializerMethodField()
     registration_priority = serializers.SerializerMethodField()
 
     class Meta:
         model = UserRegistrationStatus
         fields = '__all__'
+
+    def get_user_status(self, obj):
+        status_choices = dict(obj.STATUS_CHOICES)
+        return status_choices[obj.user_status]
 
     def get_preenlistment_priority(self, obj):
         priority_choices = dict(obj.PRIORITY_CHOICES)

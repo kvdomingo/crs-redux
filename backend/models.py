@@ -4,12 +4,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class UserProfile(AbstractUser):
-    STATUS_CHOICES = [
-        ('ST', 'Student'),
-        ('FA', 'Faculty'),
-        ('SF', 'Staff')
-    ]
-
     LIFE_STATUS_CHOICES = [
         ('', ''),
         ('A', 'Alive'),
@@ -29,20 +23,19 @@ class UserProfile(AbstractUser):
     birthday = models.DateField(blank=True, null=True)
     mobile_number = models.CharField(max_length=16, blank=True)
     telephone_number = models.CharField(max_length=16, blank=True)
-    user_status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, null=True)
     course = models.CharField(max_length=64, blank=True, null=True)
     disability = models.BooleanField(default=False)
     disability_type = models.CharField(max_length=3, choices=DISABILITY_CHOICES, default='N/A')
     disability_details = models.CharField(max_length=32, blank=True)
     present_address = models.TextField(blank=True)
     permanent_address = models.TextField(blank=True)
-    father_status = models.CharField(max_length=1, choices=LIFE_STATUS_CHOICES, default='')
+    father_status = models.CharField(max_length=1, choices=LIFE_STATUS_CHOICES, default='', blank=True)
     father_first_name = models.CharField(max_length=32, blank=True)
     father_middle_name = models.CharField(max_length=32, blank=True)
     father_last_name = models.CharField(max_length=32, blank=True)
     father_email = models.EmailField(blank=True)
     father_contact_number = models.CharField(max_length=16, blank=True)
-    mother_status = models.CharField(max_length=1, choices=LIFE_STATUS_CHOICES, default='')
+    mother_status = models.CharField(max_length=1, choices=LIFE_STATUS_CHOICES, default='', blank=True)
     mother_first_name = models.CharField(max_length=32, blank=True)
     mother_maiden_middle_name = models.CharField(max_length=32, blank=True)
     mother_maiden_last_name = models.CharField(max_length=32, blank=True)
@@ -59,6 +52,12 @@ class UserProfile(AbstractUser):
 
 
 class UserRegistrationStatus(models.Model):
+    STATUS_CHOICES = [
+        ('ST', 'Student'),
+        ('FA', 'Faculty'),
+        ('SF', 'Staff')
+    ]
+
     PRIORITY_CHOICES = [
         ('LOW', 'Low'),
         ('REG', 'Regular'),
@@ -69,6 +68,7 @@ class UserRegistrationStatus(models.Model):
 
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='registration_status', blank=True)
     student_number = models.PositiveIntegerField(unique=True, blank=True, null=True)
+    user_status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, null=True)
     registration_status = models.BooleanField(default=False)
     preenlistment_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES, default='REG')
     registration_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES, default='REG')
@@ -151,20 +151,20 @@ class Instructor(models.Model):
 
 
 class RegularClass(models.Model):
-    class_code = models.PositiveIntegerField(unique=True)
-    course_code = models.CharField(max_length=32)
+    code = models.CharField(max_length=32)
     number = models.PositiveSmallIntegerField()
-    title = models.CharField(max_length=255)
-    description = models.TextField()
+    title = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
     credits = models.FloatField()
     schedule = models.CharField(max_length=32)
     instructor = models.ManyToManyField(Instructor, related_name='classes')
     total_slots = models.PositiveSmallIntegerField()
-    restrictions = models.TextField()
+    restrictions = models.TextField(blank=True)
+    enlisted = models.ManyToManyField(UserProfile, related_name='classes', blank=True)
 
     def __str__(self):
-        return f"{self.class_code} {self.course_code} {self.number} {self.schedule}"
+        return f"{self.pk:05} {self.code} {self.number} {self.schedule}"
 
     class Meta:
-        ordering = ['-class_code']
+        ordering = ['-pk']
         verbose_name_plural = 'Regular classes'

@@ -57,6 +57,11 @@ export default class Navigation extends Component {
                                 </NavItem>
                                 <NavItem>
                                     <div className="text-white d-flex h-100 align-items-center mx-2">
+                                        {this.props.userStatus.user_status}
+                                    </div>
+                                </NavItem>
+                                <NavItem>
+                                    <div className="text-white d-flex h-100 align-items-center mx-2">
                                         SN&nbsp;{this.props.userStatus.student_number}
                                     </div>
                                 </NavItem>
