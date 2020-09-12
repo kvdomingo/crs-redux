@@ -89,7 +89,7 @@ class LoggedInView extends Component {
                             className="nav-pills flex-column text-md-left text-center mb-5"
                             orientation="vertical"
                         >
-                            {userStatus.is_crs_admin && ["Senior Faculty", "Staff"].includes(userStatus.user_status)
+                            {["Senior Faculty", "Staff"].includes(userStatus.user_status)
                                 && adminTabs.map(({path, name}, i) => (
                                     <Link
                                         key={i}

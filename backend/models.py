@@ -47,11 +47,20 @@ class UserProfile(AbstractUser):
     guardian_contact_number = models.CharField(max_length=16, blank=True)
 
     def __str__(self):
-        return f"{self.registration_status.student_number} {self.last_name}, {self.first_name} ({self.email})"
+        try:
+            number = self.registration_status.student_number
+        except Exception as e:
+            print(e)
+            number = 'UNASSIGNED'
+        return f"{number} {self.last_name.upper()}, {self.first_name} ({self.email})"
+
+    class Meta:
+        ordering = ['-registration_status__student_number']
 
 
 class UserRegistrationStatus(models.Model):
     STATUS_CHOICES = [
+        ('', ''),
         ('STD', 'Student'),
         ('JFC', 'Junior Faculty'),
         ('SFC', 'Senior Faculty'),
@@ -66,7 +75,7 @@ class UserRegistrationStatus(models.Model):
         ('CCO', 'Cadet Officer'),
     ]
 
-    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='registration_status', blank=True)
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='registration_status', blank=True, null=True)
     student_number = models.PositiveIntegerField(unique=True, blank=True, null=True)
     course = models.CharField(max_length=64, blank=True, null=True)
     user_status = models.CharField(max_length=4, choices=STATUS_CHOICES, blank=True, null=True)
@@ -77,11 +86,11 @@ class UserRegistrationStatus(models.Model):
     accountability_status = models.BooleanField(default=True)
     scholarship = models.CharField(max_length=64, blank=True, null=True)
     classes_taken = models.ManyToManyField('ClassTaken', related_name='enlisted_students', blank=True)
-    first_enrolled = models.ForeignKey('AcademicYear', on_delete=models.PROTECT, related_name='freshmen', null=True)
+    first_enrolled = models.ForeignKey('AcademicYear', on_delete=models.PROTECT, related_name='freshmen', blank=True, null=True)
     is_crs_admin = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.student_number} {self.user.last_name}, {self.user.first_name} ({self.user.email})"
+        return f"{self.student_number} {self.user.last_name.upper()}, {self.user.first_name} ({self.user.email})"
 
     class Meta:
         ordering = ['-student_number']

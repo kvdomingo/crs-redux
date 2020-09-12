@@ -16,6 +16,7 @@ export default class Login extends Component {
     state = {
         username: "",
         password: "",
+        loginError: "",
     }
 
     handleChange = e => {
@@ -33,10 +34,16 @@ export default class Login extends Component {
             },
             body: JSON.stringify({ username, password }),
         })
-            .then(res => res.json())
+            .then(async res => [res.status, await res.json()])
             .then(res => {
-                localStorage.setItem("token", res.token);
-                this.props.loginChangeView(res.user);
+                let [status, data] = res;
+                if (status === 400) {
+                    let err = data.non_field_errors || data.details;
+                    this.setState({ loginError: err[0] });
+                } else {
+                    localStorage.setItem("token", data.token);
+                    this.props.loginChangeView(data.user);
+                }
             });
     }
 
@@ -45,6 +52,11 @@ export default class Login extends Component {
             <Card className="kill-card-shadow">
                 <CardHeader>Login</CardHeader>
                 <CardBody>
+                    {(this.state.loginError)
+                        && <div className="note note-danger">
+                            {this.state.loginError}
+                        </div>
+                    }
                     <form className="form" onSubmit={this.handleSubmit}>
                         <Input
                             label="Username"
