@@ -3,7 +3,6 @@ import {
     MDBCard as Card,
     MDBCardHeader as CardHeader,
     MDBCardBody as CardBody,
-    MDBTypography as Type,
     MDBListGroup as ListGroup,
     MDBListGroupItem as ListGroupItem,
     MDBBadge as Badge,
@@ -14,38 +13,13 @@ import {
 
 export default class RegStatus extends Component {
     state = {
-        delinquencies: false,
-        status: {
-            registration_status: "",
-            preenlistment_priority: "",
-            registration_priority: "",
-            academic_eligibility: "",
-            accountability_status: "",
-        },
-    }
-
-    componentDidMount() {
-        fetch("/api/delinquencies", {
-            headers: {
-                Authorization: `JWT ${localStorage.getItem("token")}`,
-            },
-        })
-            .then(res => res.json())
-            .then(res => (res.length > 0) ? this.setState({ delinquencies: true }) : null);
-
-        fetch("/api/user-status", {
-            headers: {
-                Authorization: `JWT ${localStorage.getItem("token")}`,
-            },
-        })
-            .then(res => res.json())
-            .then(status => this.setState({ status }));
+        status: [],
     }
 
     render() {
         let { userData } = this.props,
-            { status } = this.state;
-
+            status = (userData.user_status) ? userData.user_status : [],
+            delinquencies = (userData.delinquency) ? userData.delinquency : [];
         return (
             <div>
                 <Card className="kill-card-shadow">
@@ -158,7 +132,7 @@ export default class RegStatus extends Component {
                                     <Col>Deficiencies</Col>
                                     <Col className="text-md-right text-left">
                                         <h4>
-                                            {(this.state.delinquencies)
+                                            {(delinquencies.length > 0)
                                                 ? <Badge
                                                     color="danger"
                                                     className="ml-3 kill-shadow"
@@ -181,20 +155,12 @@ export default class RegStatus extends Component {
                                     <Col>Scholarship / STFAP / ST status</Col>
                                     <Col className="text-md-right text-left">
                                         <h4>
-                                            {(userData.scholarship)
-                                                ? <Badge
-                                                    color="success"
-                                                    className="ml-3 kill-shadow"
-                                                >
-                                                    {userData.scholarship}
-                                                </Badge>
-                                                : <Badge
-                                                    color="info"
-                                                    className="ml-3 kill-shadow"
-                                                >
-                                                    No scholarships assigned
-                                                </Badge>
-                                            }
+                                            <Badge
+                                                color="info"
+                                                className="ml-3 kill-shadow"
+                                            >
+                                                {status.scholarship ? status.scholarship : "No scholarships assigned"}
+                                            </Badge>
                                         </h4>
                                     </Col>
                                 </Row>

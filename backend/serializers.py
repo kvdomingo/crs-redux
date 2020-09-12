@@ -5,8 +5,8 @@ from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
-    father_status = serializers.SerializerMethodField()
-    mother_status = serializers.SerializerMethodField()
+    delinquency = serializers.SerializerMethodField()
+    user_status = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
@@ -22,13 +22,15 @@ class UserSerializer(serializers.ModelSerializer):
             'user_permissions': {'write_only': True},
         }
 
-    def get_father_status(self, obj):
-        life_status_choices = dict(obj.LIFE_STATUS_CHOICES)
-        return life_status_choices[obj.father_status]
+    def get_delinquency(self, obj):
+        delinquencies = obj.delinquencies.all()
+        serializer = DelinquencySerializer(delinquencies, many=True)
+        return serializer.data
 
-    def get_mother_status(self, obj):
-        life_status_choices = dict(obj.LIFE_STATUS_CHOICES)
-        return life_status_choices[obj.mother_status]
+    def get_user_status(self, obj):
+        user_status = obj.registration_status
+        serializer = UserStatusSerializer(user_status)
+        return serializer.data
 
 
 class UserStatusSerializer(serializers.ModelSerializer):
@@ -102,3 +104,15 @@ class AcademicYearSerializer(serializers.ModelSerializer):
     def get_semester(self, obj):
         semester_choices = dict(obj.SEMESTER_CHOICES)
         return semester_choices[obj.semester]
+
+
+class RegularClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegularClass
+        fields = '__all__'
+
+
+class ClassTakenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassTaken
+        fields = '__all__'

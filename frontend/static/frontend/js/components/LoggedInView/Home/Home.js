@@ -6,14 +6,17 @@ import InfoTabs from "./InfoTabs/InfoTabs";
 
 export default class Home extends Component {
     render() {
+        let { userData } = this.props,
+            userStatus = userData.user_status || [];
+
         return (
             <div>
                 <Helmet>
                     <title>Home | UP Computerized Registration System</title>
                 </Helmet>
 
-                <RegStatus userData={this.props.userData} />
-                <InfoTabs />
+                {(userStatus.user_status === "Staff") || <RegStatus userData={userData} />}
+                <InfoTabs userData={userData} />
             </div>
         );
     }

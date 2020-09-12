@@ -10,13 +10,6 @@ class CurrentUser(APIView):
         return Response(serializer.data)
 
 
-class CurrentUserStatus(APIView):
-    def get(self, request):
-        user_status = UserProfile.objects.get(pk=request.user.id).registration_status
-        serializer = UserStatusSerializer(user_status)
-        return Response(serializer.data)
-
-
 class UserList(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -46,13 +39,6 @@ class AnnouncementList(APIView):
     def get(self, request):
         announcements = Announcement.objects.all()
         serializer = AnnouncementSerializer(announcements, many=True)
-        return Response(serializer.data)
-
-
-class DelinquencyList(APIView):
-    def get(self, request):
-        delinquencies = UserProfile.objects.get(username=request.user.username).delinquencies.filter(settled=False)
-        serializer = DelinquencySerializer(delinquencies, many=True)
         return Response(serializer.data)
 
 

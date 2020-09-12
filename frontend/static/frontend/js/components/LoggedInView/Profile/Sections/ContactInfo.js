@@ -58,7 +58,7 @@ export default class PersonalInfo extends Component {
 
                     <TextField
                         type="textarea"
-                        value={userData.permanentAddressSelect}
+                        value={userData.permanent_address}
                         name="permanent_address"
                         handleChange={handleChange}
                         required

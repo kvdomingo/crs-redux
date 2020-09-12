@@ -55,8 +55,8 @@ export default class FamilyInfo extends Component {
                         </Col>
                         <Col>
                             <TextField
-                                value={userData.father_middle_name}
-                                name="father_middle_name"
+                                value={userData.father_last_name}
+                                name="father_last_name"
                                 handleChange={handleChange}
                                 required
                             />

@@ -45,7 +45,7 @@ export default class AnnouncementTab extends Component {
                                     <small className="text-muted">
                                         {ann.created}
                                     </small>
-                                    <p className="mt-4">{HtmlParser(ann.content)}</p>
+                                    <div className="mt-4">{HtmlParser(ann.content)}</div>
                                 </div>
                                 <hr className="my-4" />
                             </Fragment>

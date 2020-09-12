@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import {
     MDBContainer as Container,
     MDBListGroup as ListGroup,
@@ -8,26 +8,14 @@ import {
 
 
 export default class DelinquenciesTab extends Component {
-    state = {
-        data: [],
-    }
-
-    componentDidMount() {
-        fetch("/api/delinquencies", {
-            headers: {
-                Authorization: `JWT ${localStorage.getItem("token")}`,
-            }
-        })
-            .then(res => res.json())
-            .then(data => this.setState({ data }));
-    }
-
     render() {
+        let { userData } = this.props,
+            delinquencies = (userData.delinquency) ? userData.delinquency: [];
         return (
             <Container fluid className="p-4">
-                {(this.state.data.length > 0)
+                {(delinquencies.length > 0)
                     ? <ListGroup>
-                        {this.state.data.map(({ details }, i) => (
+                        {delinquencies.map(({ details }, i) => (
                             <ListGroupItem key={i}>{details}</ListGroupItem>
                         ))}
                     </ListGroup>

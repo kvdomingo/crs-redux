@@ -1,5 +1,4 @@
 import React, {Component, lazy} from "react";
-import PropTypes from "prop-types";
 import {
     MDBContainer as Container,
     MDBRow as Row,
@@ -14,18 +13,41 @@ const Home = lazy(() => import("./Home/Home")),
       Profile = lazy(() => import("./Profile/Profile")),
       Handle404 = lazy(() => import("../Handle404"));
 
-const tabs = [
+const studentTabs = [
     { path: "/", name: "Home" },
     { path: "/profile", name: "Profile" },
     { path: "/preenlistment", name: "Pre-enlistment" },
+    { path: "/loa", name: "Leave of Absence" },
+    { path: "/dropping", name: "Dropping" },
+    { path: "/grades-viewing", name: "Grades Viewing" },
+    { path: "/payment", name: "Payment History" },
+    { path: "/clearance", name: "University Clearance" },
+    { path: "/set", name: "Student Evaluation of Teaching" },
+];
+
+const adminStudentTabs = [
+    { path: "/", name: "Home" },
+    { path: "/profile", name: "Profile" },
+    { path: "/preenlistment", name: "Pre-enlistment" },
+    { path: "/enlistment", name: "Enlistment" },
+    { path: "/loa", name: "Leave of Absence" },
+    { path: "/dropping", name: "Dropping" },
+    { path: "/grades-submission", name: "Grades Submission" },
+    { path: "/grades-viewing", name: "Grades Viewing" },
+    { path: "/payment", name: "Payment History" },
+    { path: "/clearance", name: "University Clearance" },
+    { path: "/set", name: "Student Evaluation of Teaching" },
+];
+
+const adminTabs = [
+    { path: "/", name: "Home" },
+    { path: "/profile", name: "Profile" },
+    { path: "/enlistment", name: "Enlistment" },
+    { path: "/grades-submission", name: "Grades Submission" },
 ];
 
 
 class LoggedInView extends Component {
-    static propTypes = {
-        userData: PropTypes.object.isRequired,
-    }
-
     state = {
         activeTab: window.location.pathname,
         time: dateFormat(new Date(), "h:MM tt"),
@@ -49,8 +71,11 @@ class LoggedInView extends Component {
     }
 
     render() {
+        let { userData } = this.props,
+            userStatus = userData.user_status || [];
+
         return (
-            <Container fluid className="p-4 mt-4">
+            <Container fluid className="p-0 p-md-4 mt-4">
                 <Row>
                     <Col md="2">
                         <div className="text-center mb-3">
@@ -61,19 +86,45 @@ class LoggedInView extends Component {
                         </div>
                         <Nav
                             tag="div"
-                            className="nav-pills flex-column text-md-left text-center"
+                            className="nav-pills flex-column text-md-left text-center mb-5"
                             orientation="vertical"
                         >
-                            {tabs.map(({ path, name }, i) => (
-                                <Link
-                                    key={i}
-                                    to={path}
-                                    onClick={this.togglePills(path)}
-                                    className={`nav-link ${(this.state.activeTab === path) ? "active" : null}`}
-                                >
-                                    {name}
-                                </Link>
-                            ))}
+                            {userStatus.is_crs_admin && ["Senior Faculty", "Staff"].includes(userStatus.user_status)
+                                && adminTabs.map(({path, name}, i) => (
+                                    <Link
+                                        key={i}
+                                        to={path}
+                                        onClick={this.togglePills(path)}
+                                        className={`nav-link ${(this.state.activeTab === path) ? "active" : null}`}
+                                    >
+                                        {name}
+                                    </Link>
+                                ))
+                            }
+                            {userStatus.is_crs_admin && userStatus.user_status === "Junior Faculty"
+                                && adminStudentTabs.map(({path, name}, i) => (
+                                    <Link
+                                        key={i}
+                                        to={path}
+                                        onClick={this.togglePills(path)}
+                                        className={`nav-link ${(this.state.activeTab === path) ? "active" : null}`}
+                                    >
+                                        {name}
+                                    </Link>
+                                ))
+                            }
+                            {userStatus.user_status === "Student"
+                                && studentTabs.map(({ path, name }, i) => (
+                                    <Link
+                                        key={i}
+                                        to={path}
+                                        onClick={this.togglePills(path)}
+                                        className={`nav-link ${(this.state.activeTab === path) ? "active" : null}`}
+                                    >
+                                        {name}
+                                    </Link>
+                                ))
+                            }
                         </Nav>
                     </Col>
                     <Col md="10">
@@ -81,13 +132,13 @@ class LoggedInView extends Component {
                             <Route
                                 exact path="/"
                                 render={() => (
-                                    <Home userData={this.props.userData} />
+                                    <Home userData={userData} />
                                 )}
                             />
                             <Route
                                 exact path="/profile"
                                 render={() => (
-                                    <Profile userData={this.props.userData} />
+                                    <Profile userData={userData} />
                                 )}
                             />
 

@@ -23,7 +23,6 @@ class UserProfile(AbstractUser):
     birthday = models.DateField(blank=True, null=True)
     mobile_number = models.CharField(max_length=16, blank=True)
     telephone_number = models.CharField(max_length=16, blank=True)
-    course = models.CharField(max_length=64, blank=True, null=True)
     disability = models.BooleanField(default=False)
     disability_type = models.CharField(max_length=3, choices=DISABILITY_CHOICES, default='N/A')
     disability_details = models.CharField(max_length=32, blank=True)
@@ -53,9 +52,10 @@ class UserProfile(AbstractUser):
 
 class UserRegistrationStatus(models.Model):
     STATUS_CHOICES = [
-        ('ST', 'Student'),
-        ('FA', 'Faculty'),
-        ('SF', 'Staff')
+        ('STD', 'Student'),
+        ('JFC', 'Junior Faculty'),
+        ('SFC', 'Senior Faculty'),
+        ('STF', 'Staff')
     ]
 
     PRIORITY_CHOICES = [
@@ -68,18 +68,23 @@ class UserRegistrationStatus(models.Model):
 
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='registration_status', blank=True)
     student_number = models.PositiveIntegerField(unique=True, blank=True, null=True)
-    user_status = models.CharField(max_length=2, choices=STATUS_CHOICES, blank=True, null=True)
+    course = models.CharField(max_length=64, blank=True, null=True)
+    user_status = models.CharField(max_length=4, choices=STATUS_CHOICES, blank=True, null=True)
     registration_status = models.BooleanField(default=False)
     preenlistment_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES, default='REG')
     registration_priority = models.CharField(max_length=3, choices=PRIORITY_CHOICES, default='REG')
     academic_eligibility = models.BooleanField(default=True)
     accountability_status = models.BooleanField(default=True)
     scholarship = models.CharField(max_length=64, blank=True, null=True)
+    classes_taken = models.ManyToManyField('ClassTaken', related_name='enlisted_students', blank=True)
+    first_enrolled = models.ForeignKey('AcademicYear', on_delete=models.PROTECT, related_name='freshmen', null=True)
+    is_crs_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.student_number} {self.user.last_name}, {self.user.first_name} ({self.user.email})"
 
     class Meta:
+        ordering = ['-student_number']
         verbose_name_plural = 'User registration status'
 
 
@@ -107,7 +112,7 @@ class Delinquency(models.Model):
 
     def __str__(self):
         summary = ' '.join(self.details.split(' ')[:10])
-        return f"{self.user.student_number} ({self.user.last_name}, {self.user.first_name}) {summary}..."
+        return f"{self.user.registration_status.student_number} ({self.user.last_name}, {self.user.first_name}) {summary}..."
 
 
 class AcademicYear(models.Model):
@@ -138,29 +143,31 @@ class EnlistingUnit(models.Model):
         ordering = ['code']
 
 
-class Instructor(models.Model):
-    first_name = models.CharField(max_length=32)
-    last_name = models.CharField(max_length=32)
-    department = models.ForeignKey(EnlistingUnit, on_delete=models.SET_NULL, related_name='instructors', null=True)
+class ClassTag(models.Model):
+    code = models.CharField(max_length=4)
+    name = models.CharField(max_length=32)
 
     def __str__(self):
-        return f"{self.department.code} {self.last_name}, {self.first_name}"
+        return f"{self.code} {self.name}"
 
     class Meta:
-        ordering = ['department__code', 'last_name', 'first_name']
+        ordering = ['code']
 
 
 class RegularClass(models.Model):
     code = models.CharField(max_length=32)
     number = models.PositiveSmallIntegerField()
+    section = models.CharField(max_length=16)
     title = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     credits = models.FloatField()
     schedule = models.CharField(max_length=32)
-    instructor = models.ManyToManyField(Instructor, related_name='classes')
     total_slots = models.PositiveSmallIntegerField()
     restrictions = models.TextField(blank=True)
-    enlisted = models.ManyToManyField(UserProfile, related_name='classes', blank=True)
+    instructor = models.ManyToManyField(UserProfile, related_name='handled_classes', blank=True)
+    enlisted = models.ManyToManyField(UserProfile, related_name='enlisted_classes', blank=True)
+    tag = models.ManyToManyField(ClassTag, blank=True)
+    semester = models.ForeignKey(AcademicYear, related_name='classes', on_delete=models.PROTECT)
 
     def __str__(self):
         return f"{self.pk:05} {self.code} {self.number} {self.schedule}"
@@ -168,3 +175,18 @@ class RegularClass(models.Model):
     class Meta:
         ordering = ['-pk']
         verbose_name_plural = 'Regular classes'
+
+
+class ClassTaken(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
+    cls = models.ForeignKey(RegularClass, on_delete=models.PROTECT)
+    grade = models.FloatField(blank=True, null=True)
+    completion_date = models.DateField(blank=True, null=True)
+    remarks = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return f"{str(self.cls)} ({self.cls.credits}) {self.grade}"
+
+    class Meta:
+        verbose_name_plural = 'Classes taken'
+        ordering = ['cls__semester__start_year', 'cls__semester__semester']

@@ -6,16 +6,23 @@ class UserRegistrationInline(admin.StackedInline):
     model = UserRegistrationStatus
 
 
+class DelinquencyInline(admin.TabularInline):
+    model = Delinquency
+
+
+class ClassTakenInline(admin.TabularInline):
+    model = ClassTaken
+
+
 class UserProfileAdmin(admin.ModelAdmin):
-    inlines = [UserRegistrationInline]
+    inlines = [UserRegistrationInline, DelinquencyInline, ClassTakenInline]
 
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Announcement)
-admin.site.register(Delinquency)
 admin.site.register(AcademicYear)
 admin.site.register(EnlistingUnit)
-admin.site.register(Instructor)
+admin.site.register(ClassTag)
 admin.site.register(RegularClass)
 
 admin.site.index_title = 'Admin'
