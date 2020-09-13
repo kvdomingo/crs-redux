@@ -30,7 +30,7 @@ export default class Navigation extends Component {
         let { userData } = this.props,
             userStatus = (userData.user_status) ? userData.user_status : [];
         return (
-            <Navbar dark color="red darken-4" expand="md" className="kill-shadow">
+            <Navbar dark color="red darken-4" expand="lg" className="kill-shadow">
                 <NavbarBrand>
                     <Link to="/">
                         <img

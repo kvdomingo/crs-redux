@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth/token/obtain', obtain_jwt_token),
     path('announcements', views.AnnouncementList.as_view()),
     path('academic-years', views.AcademicYearList.as_view()),
+    path('regular-classes/<int:start_year>/<int:semester>', views.RegularClassList.as_view()),
 ]

@@ -46,6 +46,15 @@ class AcademicYearList(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        academic_years = AcademicYear.objects.all()[:3]
+        academic_years = AcademicYear.objects.all() #[:3]
         serializer = AcademicYearSerializer(academic_years, many=True)
+        return Response(serializer.data)
+
+
+class RegularClassList(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, start_year, semester):
+        classes = RegularClass.objects.filter(semester__start_year=start_year).filter(semester__semester=semester).all()
+        serializer = RegularClassSerializer(classes, many=True)
         return Response(serializer.data)

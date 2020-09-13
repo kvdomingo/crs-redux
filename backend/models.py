@@ -165,7 +165,7 @@ class ClassTag(models.Model):
 
 class RegularClass(models.Model):
     code = models.CharField(max_length=32)
-    number = models.PositiveSmallIntegerField()
+    number = models.FloatField()
     section = models.CharField(max_length=16)
     title = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
@@ -173,10 +173,14 @@ class RegularClass(models.Model):
     schedule = models.CharField(max_length=32)
     total_slots = models.PositiveSmallIntegerField()
     restrictions = models.TextField(blank=True)
+    remarks = models.TextField(blank=True)
+    linked_classes = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL)
+    enlisting_unit = models.ForeignKey(EnlistingUnit, related_name='classes', on_delete=models.CASCADE, blank=True, null=True)
     instructor = models.ManyToManyField(UserProfile, related_name='handled_classes', blank=True)
     enlisted = models.ManyToManyField(UserProfile, related_name='enlisted_classes', blank=True)
     tag = models.ManyToManyField(ClassTag, blank=True)
     semester = models.ForeignKey(AcademicYear, related_name='classes', on_delete=models.PROTECT)
+    exclude_gwa = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.pk:05} {self.code} {self.number} {self.schedule}"

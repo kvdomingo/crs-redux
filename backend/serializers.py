@@ -106,10 +106,40 @@ class AcademicYearSerializer(serializers.ModelSerializer):
         return semester_choices[obj.semester]
 
 
+class ClassTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassTag
+        fields = '__all__'
+
+
+class EnlistingUnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EnlistingUnit
+        fields = '__all__'
+
+
+class InstructorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name', 'last_name']
+
+
 class RegularClassSerializer(serializers.ModelSerializer):
+    enlisting_unit = EnlistingUnitSerializer()
+    semester = AcademicYearSerializer()
+    tag = ClassTagSerializer(many=True)
+    instructor = InstructorSerializer(many=True)
+    enlisted_slots = serializers.SerializerMethodField()
+
+    def get_enlisted_slots(self, obj):
+        return obj.enlisted.count()
+
     class Meta:
         model = RegularClass
         fields = '__all__'
+        extra_kwargs = {
+            'enlisted': {'write_only': True}
+        }
 
 
 class ClassTakenSerializer(serializers.ModelSerializer):

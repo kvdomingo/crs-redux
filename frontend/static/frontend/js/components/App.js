@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Loading from "./Loading";
 import Navigation from "./Navigation";
 import Footer from "./Footer";
+import RegularClassesView from "./RegularClassesView/RegularClassesView";
 
 const LoggedOutView = lazy(() => import("./LoggedOutView/LoggedOutView")),
       LoggedInView = lazy(() => import("./LoggedInView/LoggedInView")),
@@ -52,6 +53,7 @@ export default class App extends Component {
                 <main>
                     <Suspense fallback={<Loading />}>
                         <Switch>
+                            <Route path="/regular-classes" component={RegularClassesView} />
                             <Route
                                 path="/"
                                 render={() => (
