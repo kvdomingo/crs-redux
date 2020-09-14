@@ -58,6 +58,9 @@
     "zlib": "^1.0.5"
   },
   "dependencies": {
+    "@devexpress/dx-react-core": "^2.7.1",
+    "@devexpress/dx-react-scheduler": "^2.7.1",
+    "@devexpress/dx-react-scheduler-material-ui": "^2.7.1",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "bootstrap-css-only": "^4.4.1",
     "cloudinary-react": "^1.5.0",

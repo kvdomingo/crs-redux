@@ -11,6 +11,7 @@ import dateFormat from "dateformat";
 
 const Home = lazy(() => import("./Home/Home")),
       Profile = lazy(() => import("./Profile/Profile")),
+      Preenlistment = lazy(() => import("./Preenlistment/Preenlistment")),
       Handle404 = lazy(() => import("../Handle404"));
 
 const studentTabs = [
@@ -139,6 +140,12 @@ class LoggedInView extends Component {
                                 exact path="/profile"
                                 render={() => (
                                     <Profile userData={userData} />
+                                )}
+                            />
+                            <Route
+                                exact path="/preenlistment"
+                                render={() => (
+                                    <Preenlistment userData={userData} />
                                 )}
                             />
 

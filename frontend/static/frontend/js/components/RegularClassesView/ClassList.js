@@ -11,19 +11,28 @@ export default function ClassList({ classList }) {
         let data = [];
         classList.forEach(cls => {
             let processed = [];
-            processed.push(cls.id);
+            processed.push(String(cls.id).padStart(5, "0"));
+
+            let class_name = cls.code;
             if (parseInt(cls.number) === cls.number) {
-                processed.push(`${cls.code} ${parseInt(cls.number)}`);
+                class_name += ` ${parseInt(cls.number)}`;
             } else {
-                processed.push(`${cls.code} ${cls.number}`);
+                class_name += ` ${cls.number}`;
             }
-            processed.push(cls.credits);
-            let instructors = cls.instructor.map(inst => `${inst.last_name}, ${inst.first_name}`)
+
+            class_name += ` ${cls.section}`;
+            processed.push(class_name);
+
+            processed.push(cls.credits.toFixed(1));
+
+            let instructors = cls.instructor.map(inst => `${inst.last_name}, ${inst.first_name}`);
             processed.push(`${cls.schedule}<br />${instructors.join("; ")}`);
-            processed.push(cls.enlisting_unit.code)
-            processed.push(`${cls.total_slots - cls.enlisted_slots} / ${cls.total_slots}`);
-            processed.push(0);
+
+            processed.push(cls.enlisting_unit.code);
+            processed.push(`<b>${cls.total_slots - cls.enlisted_slots}</b> / ${cls.total_slots}`);
+            processed.push(cls.demand.toString());
             processed.push("");
+
             data.push(processed);
         });
         return (

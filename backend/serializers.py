@@ -130,9 +130,13 @@ class RegularClassSerializer(serializers.ModelSerializer):
     tag = ClassTagSerializer(many=True)
     instructor = InstructorSerializer(many=True)
     enlisted_slots = serializers.SerializerMethodField()
+    demand = serializers.SerializerMethodField()
 
     def get_enlisted_slots(self, obj):
         return obj.enlisted.count()
+
+    def get_demand(self, obj):
+        return obj.demand.count()
 
     class Meta:
         model = RegularClass
