@@ -55,7 +55,7 @@ class UserProfile(AbstractUser):
         return f"{number} {self.last_name.upper()}, {self.first_name} ({self.email})"
 
     class Meta:
-        ordering = ['-registration_status__student_number']
+        ordering = ['last_name', 'first_name', 'middle_name']
 
 
 class UserRegistrationStatus(models.Model):
@@ -180,15 +180,13 @@ class RegularClass(models.Model):
     linked_classes = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL)
     enlisting_unit = models.ForeignKey(EnlistingUnit, related_name='classes', on_delete=models.CASCADE, blank=True)
     instructor = models.ManyToManyField(UserProfile, related_name='handled_classes', blank=True)
-    enlisted = models.ManyToManyField(UserProfile, related_name='enlisted_classes', blank=True)
-    demand = models.ManyToManyField(UserProfile, related_name='desired_classes', blank=True)
-    waitlist = models.ManyToManyField(UserProfile, related_name='waitlisted_classes', blank=True)
     tag = models.ManyToManyField(ClassTag, blank=True)
     semester = models.ForeignKey(AcademicYear, related_name='classes', on_delete=models.PROTECT)
     exclude_gwa = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.pk:05} {self.code} {self.number} {self.schedule}"
+        number = int(self.number) if int(self.number) == self.number else self.number
+        return f"{self.pk:05} {self.code} {number} {self.schedule}"
 
     class Meta:
         ordering = ['-pk']
@@ -196,11 +194,30 @@ class RegularClass(models.Model):
 
 
 class ClassTaken(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
-    cls = models.ForeignKey(RegularClass, on_delete=models.PROTECT)
-    grade = models.FloatField(blank=True, null=True)
+    STATUS_CHOICES = [
+        ('', ''),
+        ('D', 'Desired'),
+        ('E', 'Enlisted'),
+        ('W', 'Waitlisted'),
+        ('X', 'Cancelled'),
+        ('P', 'Passed'),
+        ('F', 'Failed'),
+        ('C', 'Conditional'),
+    ]
+
+    GRADE_CHOICES = list(range(100, 301, 25))
+    GRADE_CHOICES.extend([400, 500])
+    GRADE_CHOICES = list(map(lambda x: f"{x:.2f}", map(lambda x: x/100, GRADE_CHOICES)))
+    GRADE_CHOICES.extend(['INC', 'DRP', 'P', 'F'])
+    GRADE_CHOICES = list(tuple(zip(GRADE_CHOICES, GRADE_CHOICES)))
+
+    user = models.ForeignKey(UserProfile, related_name='classes_taken', on_delete=models.CASCADE, blank=True, null=True)
+    cls = models.ForeignKey(RegularClass, on_delete=models.PROTECT, verbose_name='class')
+    grade = models.CharField(choices=GRADE_CHOICES, max_length=4, blank=True)
     completion_date = models.DateField(blank=True, null=True)
     remarks = models.CharField(max_length=255, blank=True)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=4, blank=True)
+    cancelled_by = models.ForeignKey(UserProfile, related_name='classes_cancelled', blank=True, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{str(self.cls)} ({self.cls.credits}) {self.grade}"

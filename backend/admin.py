@@ -12,6 +12,7 @@ class DelinquencyInline(admin.TabularInline):
 
 class ClassTakenInline(admin.TabularInline):
     model = ClassTaken
+    fk_name = 'user'
 
 
 class UserProfileAdmin(admin.ModelAdmin):

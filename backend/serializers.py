@@ -3,6 +3,64 @@ from rest_framework_jwt.settings import api_settings
 from .models import *
 
 
+class AcademicYearSerializer(serializers.ModelSerializer):
+    semester = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AcademicYear
+        fields = '__all__'
+
+    def get_semester(self, obj):
+        semester_choices = dict(obj.SEMESTER_CHOICES)
+        return semester_choices[obj.semester]
+
+
+class ClassTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassTag
+        fields = '__all__'
+
+
+class EnlistingUnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EnlistingUnit
+        fields = '__all__'
+
+
+class ClassTakenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassTaken
+        fields = '__all__'
+
+
+class InstructorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name', 'last_name']
+
+
+class RegularClassSerializer(serializers.ModelSerializer):
+    enlisting_unit = EnlistingUnitSerializer()
+    semester = AcademicYearSerializer()
+    tag = ClassTagSerializer(many=True)
+    instructor = InstructorSerializer(many=True)
+    enlisted_slots = serializers.SerializerMethodField()
+    demand = serializers.SerializerMethodField()
+
+    def get_enlisted_slots(self, obj):
+        return obj.enlisted.count()
+
+    def get_demand(self, obj):
+        return obj.demand.count()
+
+    class Meta:
+        model = RegularClass
+        fields = '__all__'
+        extra_kwargs = {
+            'enlisted': {'write_only': True}
+        }
+
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
     delinquency = serializers.SerializerMethodField()
@@ -37,6 +95,7 @@ class UserStatusSerializer(serializers.ModelSerializer):
     user_status = serializers.SerializerMethodField()
     preenlistment_priority = serializers.SerializerMethodField()
     registration_priority = serializers.SerializerMethodField()
+    classes_taken = serializers.SerializerMethodField()
 
     class Meta:
         model = UserRegistrationStatus
@@ -53,6 +112,11 @@ class UserStatusSerializer(serializers.ModelSerializer):
     def get_registration_priority(self, obj):
         priority_choices = dict(obj.PRIORITY_CHOICES)
         return priority_choices[obj.registration_priority]
+
+    def get_classes_taken(self, obj):
+        classes = obj.classes_taken.all()
+        serializer = ClassTakenSerializer(classes, many=True)
+        return serializer.data
 
 
 class UserSerializerWithToken(serializers.ModelSerializer):
@@ -91,62 +155,4 @@ class AnnouncementSerializer(serializers.ModelSerializer):
 class DelinquencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Delinquency
-        fields = '__all__'
-
-
-class AcademicYearSerializer(serializers.ModelSerializer):
-    semester = serializers.SerializerMethodField()
-
-    class Meta:
-        model = AcademicYear
-        fields = '__all__'
-
-    def get_semester(self, obj):
-        semester_choices = dict(obj.SEMESTER_CHOICES)
-        return semester_choices[obj.semester]
-
-
-class ClassTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ClassTag
-        fields = '__all__'
-
-
-class EnlistingUnitSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EnlistingUnit
-        fields = '__all__'
-
-
-class InstructorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserProfile
-        fields = ['first_name', 'last_name']
-
-
-class RegularClassSerializer(serializers.ModelSerializer):
-    enlisting_unit = EnlistingUnitSerializer()
-    semester = AcademicYearSerializer()
-    tag = ClassTagSerializer(many=True)
-    instructor = InstructorSerializer(many=True)
-    enlisted_slots = serializers.SerializerMethodField()
-    demand = serializers.SerializerMethodField()
-
-    def get_enlisted_slots(self, obj):
-        return obj.enlisted.count()
-
-    def get_demand(self, obj):
-        return obj.demand.count()
-
-    class Meta:
-        model = RegularClass
-        fields = '__all__'
-        extra_kwargs = {
-            'enlisted': {'write_only': True}
-        }
-
-
-class ClassTakenSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ClassTaken
         fields = '__all__'
