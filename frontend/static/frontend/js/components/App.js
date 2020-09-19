@@ -14,6 +14,7 @@ export default class App extends Component {
     state = {
         loggedIn: !!(localStorage.getItem("token")),
         userData: [],
+        currentSemester: [],
     }
 
     componentDidMount() {
@@ -36,6 +37,12 @@ export default class App extends Component {
                     }
                 });
         }
+
+        fetch("/api/academic-years")
+            .then(res => res.json())
+            .then(res => {
+                this.setState({ currentSemester: res[2] });
+            });
     }
 
     loginChangeView = userData => {
@@ -53,13 +60,25 @@ export default class App extends Component {
                 <main>
                     <Suspense fallback={<Loading />}>
                         <Switch>
-                            <Route path="/regular-classes" component={RegularClassesView} />
+                            <Route
+                                path="/regular-classes"
+                                render={() => (
+                                    <RegularClassesView
+                                        currentSemester={this.state.currentSemester}
+                                    />
+                                )}
+                            />
                             <Route
                                 path="/"
                                 render={() => (
                                     (this.state.loggedIn)
-                                        ? <LoggedInView userData={this.state.userData} />
-                                        : <LoggedOutView loginChangeView={this.loginChangeView} />
+                                        ? <LoggedInView
+                                            userData={this.state.userData}
+                                            currentSemester={this.state.currentSemester}
+                                        />
+                                        : <LoggedOutView
+                                            loginChangeView={this.loginChangeView}
+                                        />
                                 )}
                             />
 

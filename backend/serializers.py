@@ -27,12 +27,6 @@ class EnlistingUnitSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ClassTakenSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ClassTaken
-        fields = '__all__'
-
-
 class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -48,10 +42,10 @@ class RegularClassSerializer(serializers.ModelSerializer):
     demand = serializers.SerializerMethodField()
 
     def get_enlisted_slots(self, obj):
-        return obj.enlisted.count()
+        return obj.class_list.filter(status='E').count()
 
     def get_demand(self, obj):
-        return obj.demand.count()
+        return obj.class_list.filter(status='D').count()
 
     class Meta:
         model = RegularClass
@@ -59,6 +53,14 @@ class RegularClassSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'enlisted': {'write_only': True}
         }
+
+
+class ClassTakenSerializer(serializers.ModelSerializer):
+    cls = RegularClassSerializer()
+
+    class Meta:
+        model = ClassTaken
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -144,6 +146,17 @@ class UserSerializerWithToken(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+
+
+class CrsStatusSerializer(serializers.ModelSerializer):
+    mode = serializers.SerializerMethodField()
+
+    def get_mode(self, obj):
+        return dict(obj.MODE_CHOICES)[obj.mode]
+
+    class Meta:
+        model = CrsStatus
+        fields = '__all__'
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):

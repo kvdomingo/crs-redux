@@ -97,6 +97,25 @@ class UserRegistrationStatus(models.Model):
         verbose_name_plural = 'User registration status'
 
 
+class CrsStatus(models.Model):
+    MODE_CHOICES = [
+        ('P', 'Preenlistment'),
+        ('W', 'Waitlisting'),
+        ('D0', 'Dropping'),
+        ('D1', 'Post-dropping'),
+        ('C', 'Closed'),
+    ]
+
+    mode = models.CharField(choices=MODE_CHOICES, max_length=4)
+    set_available = models.BooleanField(verbose_name='SET available')
+
+    class Meta:
+        verbose_name_plural = 'CRS Status'
+
+    def __str__(self):
+        return dict(self.MODE_CHOICES)[self.mode]
+
+
 class Announcement(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -212,7 +231,7 @@ class ClassTaken(models.Model):
     GRADE_CHOICES = list(tuple(zip(GRADE_CHOICES, GRADE_CHOICES)))
 
     user = models.ForeignKey(UserProfile, related_name='classes_taken', on_delete=models.CASCADE, blank=True, null=True)
-    cls = models.ForeignKey(RegularClass, on_delete=models.PROTECT, verbose_name='class')
+    cls = models.ForeignKey(RegularClass, on_delete=models.PROTECT, related_name='class_list', verbose_name='class')
     grade = models.CharField(choices=GRADE_CHOICES, max_length=4, blank=True)
     completion_date = models.DateField(blank=True, null=True)
     remarks = models.CharField(max_length=255, blank=True)

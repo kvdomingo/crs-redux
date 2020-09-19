@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    MDBBtn as Button,
     MDBTableBody as TableBody,
 } from "mdbreact";
 import HtmlParser from "react-html-parser";
@@ -37,13 +38,25 @@ export default function ClassList({ classList }) {
         });
         return (
             <TableBody>
-                {data.map((dat, i) => (
-                    <tr className="text-center" key={i}>
-                        {dat.map((d, j) => (
-                            <td key={j}>{HtmlParser(d)}</td>
-                        ))}
-                    </tr>
-                ))}
+                {classList.map((cls, i) => (
+                <tr className="text-center" key={i}>
+                    <td>{String(cls.id).padStart(5, "0")}</td>
+                    <td>
+                        {cls.code} {parseInt(cls.number) === cls.number ? parseInt(cls.number) : cls.number} {cls.section}
+                    </td>
+                    <td>{cls.credits.toFixed(1)}</td>
+                    <td>
+                        {cls.schedule}<br />
+                        {cls.instructor.map(inst => `${inst.last_name}, ${inst.first_name}`).join("; ")}
+                    </td>
+                    <td>{cls.enlisting_unit.code}</td>
+                    <td>
+                        <b>{cls.total_slots - cls.enlisted_slots}</b> / {cls.total_slots}
+                    </td>
+                    <td>{cls.demand.toString()}</td>
+                    <td>{""}</td>
+                </tr>
+            ))}
             </TableBody>
         );
     }

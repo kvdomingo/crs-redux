@@ -7,26 +7,42 @@ import {
     MDBTableHead as TableHead,
 } from "mdbreact";
 import Helmet from "react-helmet";
+import WeekSchedule from "./WeekSchedule";
+import AllClassList from "./ClassList";
+import MyClassList from "../../RegularClassesView/ClassList";
 
 
 export default class Preenlistment extends Component {
     state = {
         search: "",
+        classList: [],
         classesNow: [],
+        allClasses: [],
         semesterNow: [],
     }
 
     async componentDidMount() {
-        fetch("/api/academic-years")
-            .then(async res => await res.json())
-            .then(async semesterNow => await this.setState({ semesterNow }));
+        let { currentSemester } = await this.props;
+        this.setState({ semesterNow: currentSemester });
 
-        let userData = await this.props.userData,
+        let { userData } = await this.props,
             userStatus = userData.user_status,
-            classesNow = userStatus.classes_taken.filter(obj => {
-                return ((obj.semester.semester === this.state.semesterNow.semester)
-                    && (obj.semester.start_year === this.state.semesterNow.start_year));
+            classesNow = userStatus.classes_taken.filter(obj => (
+                (obj.semester.semester === this.state.semesterNow.semester)
+                    && (obj.semester.start_year === this.state.semesterNow.start_year)
+            ));
+        this.setState({ classesNow });
+
+        fetch("/api/auth/user/current")
+            .then(async res => await res.json())
+            .then(res => {
+                let userStatus = res.user_status,
+                    allClasses = userStatus.classes_taken;
+                this.setState({ allClasses });
             });
+    }
+
+    updateClassesNow = classesNow => {
         this.setState({ classesNow });
     }
 
@@ -35,8 +51,25 @@ export default class Preenlistment extends Component {
         this.setState({ [name]: value });
     }
 
-    handleSubmit = e => {
+    handleSubmit = async e => {
         e.preventDefault();
+        let { semester, start_year } = await this.props.currentSemester;
+        switch (semester) {
+            case "First Semester":
+                semester = 1;
+                break;
+            case "Second Semester":
+                semester = 2;
+                break;
+            case "Midyear":
+                semester = 3;
+                break;
+            default:
+                semester = "";
+        }
+        fetch(`/api/regular-classes/${start_year}/${semester}`)
+            .then(res => res.json())
+            .then(classList => this.setState({ classList }));
     }
 
     render() {
@@ -68,8 +101,11 @@ export default class Preenlistment extends Component {
                             <input
                                 className="form-control my-0 py-1"
                                 type="text"
+                                name="search"
                                 aria-label="Search"
                                 placeholder="Search for classes"
+                                onChange={this.handleChange}
+                                value={this.state.search}
                             />
                         </div>
                     </form>
@@ -78,20 +114,48 @@ export default class Preenlistment extends Component {
                 <Container fluid>
                     <Table bordered responsive>
                         <TableHead>
+                            <tr className="text-center blue-grey lighten-4">
+                                <th colSpan={8} className="font-weight-bold">
+                                    Available classes
+                                </th>
+                            </tr>
+                            <tr className="text-center">
+                                <th>Class Code</th>
+                                <th>Class</th>
+                                <th>Credits</th>
+                                <th>Schedule / Instructor(s) / Remarks</th>
+                                <th>Enlisting Unit / Block / Block Remarks</th>
+                                <th>Available Slots / Total Slots</th>
+                                <th>Demand</th>
+                                <th>Action</th>
+                            </tr>
+                        </TableHead>
+                        <AllClassList
+                            classList={this.state.classList}
+                            updateClassesNow={this.updateClassesNow}
+                        />
+                    </Table>
+                </Container>
+
+                <Container fluid>
+                    <WeekSchedule />
+                </Container>
+
+                <Container fluid>
+                    <Table bordered responsive>
+                        <TableHead>
+                            <tr className="text-center blue-grey lighten-4">
+                                <th colSpan={8} className="font-weight-bold">
+                                    My classes
+                                </th>
+                            </tr>
                             <tr className="text-center">
                                 {classHeaders.map((head, i) => (
                                     <th key={i}>{head}</th>
                                 ))}
                             </tr>
                         </TableHead>
-                        <TableBody>
-                            {(this.state.classesNow.length === 0)
-                                ? <tr>
-                                    <td colSpan="8" className="text-center">No classes to display</td>
-                                </tr>
-                                : null
-                            }
-                        </TableBody>
+                        <MyClassList classList={this.state.classesNow} />
                     </Table>
                 </Container>
             </div>

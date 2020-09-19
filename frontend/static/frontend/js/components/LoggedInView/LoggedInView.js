@@ -73,7 +73,8 @@ class LoggedInView extends Component {
 
     render() {
         let { userData } = this.props,
-            userStatus = userData.user_status || [];
+            userStatus = userData.user_status || [],
+            currentSemester = this.props.currentSemester || [];
 
         return (
             <Container fluid className="p-0 p-md-4 mt-4">
@@ -133,7 +134,10 @@ class LoggedInView extends Component {
                             <Route
                                 exact path="/"
                                 render={() => (
-                                    <Home userData={userData} />
+                                    <Home
+                                        userData={userData}
+                                        currentSemester={currentSemester}
+                                    />
                                 )}
                             />
                             <Route
@@ -145,7 +149,10 @@ class LoggedInView extends Component {
                             <Route
                                 exact path="/preenlistment"
                                 render={() => (
-                                    <Preenlistment userData={userData} />
+                                    <Preenlistment
+                                        userData={userData}
+                                        currentSemester={currentSemester}
+                                    />
                                 )}
                             />
 

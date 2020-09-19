@@ -18,13 +18,14 @@ export default class RegStatus extends Component {
 
     render() {
         let { userData } = this.props,
-            status = (userData.user_status) ? userData.user_status : [],
-            delinquencies = (userData.delinquency) ? userData.delinquency : [];
+            status = userData.user_status || [],
+            delinquencies = userData.delinquency || [],
+            currentSemester = this.props.currentSemester || [];
         return (
             <div>
                 <Card className="kill-card-shadow">
                     <CardHeader className="text-uppercase font-weight-bold">
-                        First Semester AY 2020-2021
+                        {currentSemester.semester}, A.Y. {currentSemester.start_year}-{currentSemester.start_year + 1}
                     </CardHeader>
                     <CardBody>
                         <ListGroup>

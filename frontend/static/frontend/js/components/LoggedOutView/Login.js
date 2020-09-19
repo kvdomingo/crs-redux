@@ -5,6 +5,7 @@ import {
     MDBCardHeader as CardHeader,
     MDBCardBody as CardBody,
     MDBInput as Input,
+    MDBBtn as Button,
 } from "mdbreact";
 
 
@@ -16,6 +17,7 @@ export default class Login extends Component {
     state = {
         username: "",
         password: "",
+        loginSubmitted: false,
         loginError: "",
     }
 
@@ -26,6 +28,7 @@ export default class Login extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
+        this.setState({ loginSubmitted: true });
         let { username, password } = this.state;
         fetch("/api/auth/token/obtain", {
             method: "POST",
@@ -39,7 +42,7 @@ export default class Login extends Component {
                 let [status, data] = res;
                 if (status === 400) {
                     let err = data.non_field_errors || data.details;
-                    this.setState({ loginError: err[0] });
+                    this.setState({ loginError: err[0], loginSubmitted: false });
                 } else {
                     localStorage.setItem("token", data.token);
                     this.props.loginChangeView(data.user);
@@ -76,11 +79,20 @@ export default class Login extends Component {
                             onChange={this.handleChange}
                             value={this.state.password}
                         />
-                        <input
-                            type="submit"
-                            value="Login"
-                            className="ml-0 btn btn-primary kill-shadow"
-                        />
+                        {(!this.state.loginSubmitted)
+                            ? <input
+                                type="submit"
+                                value="Login"
+                                className="ml-0 btn btn-primary kill-shadow"
+                            />
+                            : <Button
+                                className="ml-0 kill-shadow"
+                                color="primary"
+                                disabled
+                            >
+                                <span className="spinner-border-sm" />
+                            </Button>
+                        }
                     </form>
                 </CardBody>
             </Card>

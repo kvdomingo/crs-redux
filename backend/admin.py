@@ -20,6 +20,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(CrsStatus)
 admin.site.register(Announcement)
 admin.site.register(AcademicYear)
 admin.site.register(EnlistingUnit)
