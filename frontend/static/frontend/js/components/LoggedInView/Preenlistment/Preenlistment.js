@@ -1,9 +1,9 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {
     MDBContainer as Container,
     MDBIcon as Icon,
     MDBTable as Table,
-    MDBTableBody as TableBody,
     MDBTableHead as TableHead,
 } from "mdbreact";
 import Helmet from "react-helmet";
@@ -13,6 +13,29 @@ import MyClassList from "../../RegularClassesView/ClassList";
 
 
 export default class Preenlistment extends Component {
+    static propTypes = {
+        userData: PropTypes.shape({
+            user_status: PropTypes.shape({
+               classes_taken: PropTypes.arrayOf(PropTypes.object),
+            }),
+            semester: PropTypes.shape({
+                start_year: PropTypes.number,
+                semester: PropTypes.number,
+            }),
+        }).isRequired,
+        currentSemester: PropTypes.object.isRequired,
+    }
+
+    static defaultProps = {
+        userData: {
+            user_status: {
+                classes_taken: [],
+            },
+            semester: [],
+        },
+        currentSemester: [],
+    }
+
     state = {
         search: "",
         classList: [],
@@ -22,11 +45,10 @@ export default class Preenlistment extends Component {
     }
 
     async componentDidMount() {
-        let { currentSemester } = await this.props;
+        let { currentSemester, userData } = await this.props;
         this.setState({ semesterNow: currentSemester });
 
-        let { userData } = await this.props,
-            userStatus = userData.user_status,
+        let userStatus = userData.user_status,
             classesNow = userStatus.classes_taken.filter(obj => (
                 (obj.semester.semester === this.state.semesterNow.semester)
                     && (obj.semester.start_year === this.state.semesterNow.start_year)
@@ -51,9 +73,9 @@ export default class Preenlistment extends Component {
         this.setState({ [name]: value });
     }
 
-    handleSubmit = async e => {
+    handleSubmit = e => {
         e.preventDefault();
-        let { semester, start_year } = await this.props.currentSemester;
+        let { semester, start_year } = this.props.currentSemester;
         switch (semester) {
             case "First Semester":
                 semester = 1;

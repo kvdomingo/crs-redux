@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {
     MDBCard as Card,
@@ -17,8 +17,8 @@ export default class Login extends Component {
     state = {
         username: "",
         password: "",
-        loginSubmitted: false,
-        loginError: "",
+        loading: false,
+        error: "",
     }
 
     handleChange = e => {
@@ -28,7 +28,7 @@ export default class Login extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        this.setState({ loginSubmitted: true });
+        this.setState({ loading: true });
         let { username, password } = this.state;
         fetch("/api/auth/token/obtain", {
             method: "POST",
@@ -37,12 +37,12 @@ export default class Login extends Component {
             },
             body: JSON.stringify({ username, password }),
         })
-            .then(async res => [res.status, await res.json()])
+            .then(async res => [res.ok, await res.json()])
             .then(res => {
-                let [status, data] = res;
-                if (status === 400) {
+                let [ok, data] = res;
+                if (!ok) {
                     let err = data.non_field_errors || data.details;
-                    this.setState({ loginError: err[0], loginSubmitted: false });
+                    this.setState({ error: err[0], loading: false });
                 } else {
                     localStorage.setItem("token", data.token);
                     this.props.loginChangeView(data.user);
@@ -55,9 +55,9 @@ export default class Login extends Component {
             <Card className="kill-card-shadow">
                 <CardHeader>Login</CardHeader>
                 <CardBody>
-                    {(this.state.loginError)
+                    {(this.state.error)
                         && <div className="note note-danger">
-                            {this.state.loginError}
+                            {this.state.error}
                         </div>
                     }
                     <form className="form" onSubmit={this.handleSubmit}>
@@ -67,6 +67,7 @@ export default class Login extends Component {
                             name="username"
                             group
                             validate
+                            autoFocus
                             onChange={this.handleChange}
                             value={this.state.username}
                         />
@@ -79,18 +80,21 @@ export default class Login extends Component {
                             onChange={this.handleChange}
                             value={this.state.password}
                         />
-                        {(!this.state.loginSubmitted)
+                        {(!this.state.loading)
                             ? <input
                                 type="submit"
                                 value="Login"
                                 className="ml-0 btn btn-primary kill-shadow"
+                                disabled={!(this.state.username && this.state.password.length >= 8)}
                             />
                             : <Button
                                 className="ml-0 kill-shadow"
                                 color="primary"
                                 disabled
                             >
-                                <span className="spinner-border-sm" />
+                                <div className="spinner-border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </div>
                             </Button>
                         }
                     </form>

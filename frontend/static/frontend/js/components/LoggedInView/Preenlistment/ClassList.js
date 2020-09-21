@@ -1,11 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {
     MDBTableBody as TableBody,
     MDBBtn as Button,
 } from "mdbreact";
 
 
-export default function ClassList({ classList, updateClassesNow }) {
+function ClassList({ classList, updateClassesNow }) {
     const handleSubmit = id => e => {
         e.preventDefault();
         fetch("/api/class/add-desired", {
@@ -60,3 +61,29 @@ export default function ClassList({ classList, updateClassesNow }) {
         </TableBody>
     );
 }
+
+ClassList.propTypes = {
+    classList: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        code: PropTypes.string,
+        number: PropTypes.number,
+        credits: PropTypes.number,
+        instructor: PropTypes.shape({
+            first_name: PropTypes.string,
+            last_name: PropTypes.string,
+        }),
+        enlisting_unit: PropTypes.shape({
+            code: PropTypes.string,
+        }),
+        total_slots: PropTypes.number,
+        enlisted_slots: PropTypes.number,
+        demand: PropTypes.number,
+    })),
+    updateClassesNow: PropTypes.func.isRequired,
+}
+
+ClassList.defaultProps = {
+    classList: [],
+}
+
+export default ClassList;

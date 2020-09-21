@@ -1,5 +1,7 @@
 import React, {Component, lazy, Suspense} from "react";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 import Loading from "./Loading";
 import Navigation from "./Navigation";
 import Footer from "./Footer";
@@ -55,39 +57,40 @@ export default class App extends Component {
 
     render() {
         return (
-            <Router>
-                <Navigation logoutChangeView={this.logoutChangeView} userData={this.state.userData} />
-                <main>
-                    <Suspense fallback={<Loading />}>
-                        <Switch>
-                            <Route
-                                path="/regular-classes"
-                                render={() => (
-                                    <RegularClassesView
-                                        currentSemester={this.state.currentSemester}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path="/"
-                                render={() => (
-                                    (this.state.loggedIn)
-                                        ? <LoggedInView
-                                            userData={this.state.userData}
+            <Provider store={store}>
+                <Router>
+                    <Navigation logoutChangeView={this.logoutChangeView} userData={this.state.userData} />
+                    <main>
+                        <Suspense fallback={<Loading />}>
+                            <Switch>
+                                <Route
+                                    path="/regular-classes"
+                                    render={() => (
+                                        <RegularClassesView
                                             currentSemester={this.state.currentSemester}
                                         />
-                                        : <LoggedOutView
-                                            loginChangeView={this.loginChangeView}
-                                        />
-                                )}
-                            />
-
-                            <Route component={Handle404} status={404} />
-                        </Switch>
-                    </Suspense>
-                </main>
-                <Footer />
-            </Router>
+                                    )}
+                                />
+                                <Route
+                                    path="/"
+                                    render={() => (
+                                        (this.state.loggedIn)
+                                            ? <LoggedInView
+                                                userData={this.state.userData}
+                                                currentSemester={this.state.currentSemester}
+                                            />
+                                            : <LoggedOutView
+                                                loginChangeView={this.loginChangeView}
+                                            />
+                                    )}
+                                />
+                                <Route component={Handle404} status={404} />
+                            </Switch>
+                        </Suspense>
+                    </main>
+                    <Footer />
+                </Router>
+            </Provider>
         );
     }
 }
