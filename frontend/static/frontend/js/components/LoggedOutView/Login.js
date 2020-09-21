@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import {
     MDBCard as Card,
     MDBCardHeader as CardHeader,
@@ -7,13 +6,16 @@ import {
     MDBInput as Input,
     MDBBtn as Button,
 } from "mdbreact";
+import axiosInstance from "../axios/axiosDefault";
+import { connect } from "react-redux";
+import { dispatchUserData } from "../redux/userData/userDataActions";
 
 
-export default class Login extends Component {
-    static propTypes = {
-        loginChangeView: PropTypes.func.isRequired,
-    }
+const mapDispatchToProps = dispatch => ({
+    dispatchUserData: data => dispatch(dispatchUserData(data)),
+});
 
+class Login extends Component {
     state = {
         username: "",
         password: "",
@@ -30,23 +32,20 @@ export default class Login extends Component {
         e.preventDefault();
         this.setState({ loading: true });
         let { username, password } = this.state;
-        fetch("/api/auth/token/obtain", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-        })
-            .then(async res => [res.ok, await res.json()])
+        axiosInstance.post(
+            "/auth/token/obtain",
+            { username, password },
+        )
             .then(res => {
-                let [ok, data] = res;
-                if (!ok) {
-                    let err = data.non_field_errors || data.details;
-                    this.setState({ error: err[0], loading: false });
-                } else {
-                    localStorage.setItem("token", data.token);
-                    this.props.loginChangeView(data.user);
-                }
+                let { data } = res;
+                localStorage.setItem("token", data.token);
+                axiosInstance.defaults.headers["Authorization"] = `JWT ${data.token}`;
+                this.props.dispatchUserData(data.user);
+                this.props.loginChangeView(data.user);
+            })
+            .catch(err => {
+               let error = err.message;
+               this.setState({ error });
             });
     }
 
@@ -103,3 +102,5 @@ export default class Login extends Component {
         );
     }
 }
+
+export default connect(null, mapDispatchToProps)(Login);

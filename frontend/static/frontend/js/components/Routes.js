@@ -1,16 +1,43 @@
 import React, { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { connect } from "react-redux";
 
-const LoggedOutView = lazy(() => import('./LoggedOutView/LoggedOutView'));
+const LoggedOutView = lazy(() => import("./LoggedOutView/LoggedOutView")),
+      LoggedInView = lazy(() => import("./LoggedInView/LoggedInView")),
+      Handle404 = lazy(() => import("./Handle404")),
+      RegularClassesView = lazy(() => import("./RegularClassesView/RegularClassesView"));
 
-const routes = [
-    { path: "/", Component: LoggedOutView },
-]
+const mapStateToProps = state => ({
+    userData: state.userData.userData,
+});
 
-export default (
-    <Switch>
-        {routes.map(({ path, Component }, i) => (
-            <Route exact path={path} component={Component} key={i} />
-        ))}
-    </Switch>
-);
+function Routes(props) {
+    return (
+        <Switch>
+            <Route
+                path="/regular-classes"
+                render={() => (
+                    <RegularClassesView
+                        currentSemester={props.currentSemester}
+                    />
+                )}
+            />
+            <Route
+                path="/"
+                render={() => (
+                    (props.loggedIn)
+                        ? <LoggedInView
+                            userData={props.userData}
+                            currentSemester={props.currentSemester}
+                        />
+                        : <LoggedOutView
+                            loginChangeView={props.loginChangeView}
+                        />
+                )}
+            />
+            <Route component={Handle404} status={404} />
+        </Switch>
+    );
+}
+
+export default connect(mapStateToProps)(Routes);

@@ -1,11 +1,13 @@
 import axios from "axios";
 
 
-const axiosDefault = axios.create({
+const axiosInstance = axios.create({
     baseURL: "/api",
+    timeout: 5000,
     headers: {
+        Authorization: `JWT ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
-    },
+    }
 });
 
-export default axiosDefault;
+export default axiosInstance;

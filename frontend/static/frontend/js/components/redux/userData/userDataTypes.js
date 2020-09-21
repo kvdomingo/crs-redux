@@ -1,0 +1,1 @@
+export const DISPATCH_USER_DATA = "GET_USER_DATA";

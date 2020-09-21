@@ -10,11 +10,34 @@ import {
     MDBTypography as Type,
 } from "mdbreact";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { dispatchUserData } from "./redux/userData/userDataActions";
+import axiosInstance from "./axios/axiosDefault";
 
 
-export default class Navigation extends Component {
+const mapStateToProps = state => ({
+    userData: state.userData.userData,
+});
+
+const mapDispatchToProps = dispatch => ({
+    dispatchUserData: data => dispatch(dispatchUserData(data)),
+});
+
+class Navigation extends Component {
     state = {
         isOpen: false,
+    }
+
+    componentDidMount() {
+        axiosInstance.get("/auth/user/current")
+            .then(res => {
+                let { data } = res;
+                this.props.dispatchUserData(data);
+            })
+            .catch(err => {
+                localStorage.removeItem("token");
+                axiosInstance.defaults.headers.Authorization = "JWT ";
+            })
     }
 
     toggleCollapse = () => {
@@ -88,3 +111,5 @@ export default class Navigation extends Component {
         );
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
