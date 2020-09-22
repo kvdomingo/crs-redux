@@ -5,6 +5,8 @@ from .serializers import *
 
 
 class CrsStatusView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
         status = CrsStatus.objects.first()
         serializer = CrsStatusSerializer(status)

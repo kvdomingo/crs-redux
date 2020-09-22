@@ -8,11 +8,11 @@ import {
 } from "mdbreact";
 import axiosInstance from "../axios/axiosDefault";
 import { connect } from "react-redux";
-import { dispatchUserData } from "../redux/userData/userDataActions";
+import { fetchCurrentUserSuccess } from "../redux/userData/userDataActions";
 
 
 const mapDispatchToProps = dispatch => ({
-    dispatchUserData: data => dispatch(dispatchUserData(data)),
+    fetchCurrentUserSuccess: data => dispatch(fetchCurrentUserSuccess(data)),
 });
 
 class Login extends Component {
@@ -40,8 +40,7 @@ class Login extends Component {
                 let { data } = res;
                 localStorage.setItem("token", data.token);
                 axiosInstance.defaults.headers["Authorization"] = `JWT ${data.token}`;
-                this.props.dispatchUserData(data.user);
-                this.props.loginChangeView(data.user);
+                this.props.fetchCurrentUserSuccess(data.user);
             })
             .catch(err => {
                let error = err.message;

@@ -1,29 +1,27 @@
-import React, {Component} from "react";
+import React from "react";
 import Helmet from "react-helmet";
 import RegStatus from "./RegStatus";
 import InfoTabs from "./InfoTabs/InfoTabs";
+import { connect } from "react-redux";
 
 
-export default class Home extends Component {
-    render() {
-        let { userData } = this.props,
-            userStatus = userData.user_status || [],
-            currentSemester = this.props.currentSemester || [];
+const mapStateToProps = state => ({
+    userData: state.userData.userData || [],
+});
 
-        return (
-            <div>
-                <Helmet>
-                    <title>Home | UP Computerized Registration System</title>
-                </Helmet>
+function Home({ userData }) {
+    let userStatus = userData.user_status || [];
 
-                {!(userStatus.user_status === "Staff")
-                    && <RegStatus
-                        userData={userData}
-                        currentSemester={currentSemester}
-                    />
-                }
-                <InfoTabs userData={userData} />
-            </div>
-        );
-    }
+    return (
+        <div>
+            <Helmet>
+                <title>Home | UP Computerized Registration System</title>
+            </Helmet>
+
+            { !(userStatus.user_status === "Staff") && <RegStatus /> }
+            <InfoTabs />
+        </div>
+    );
 }
+
+export default connect(mapStateToProps)(Home);

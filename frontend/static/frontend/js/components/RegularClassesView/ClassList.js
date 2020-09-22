@@ -1,9 +1,7 @@
 import React from "react";
 import {
-    MDBBtn as Button,
     MDBTableBody as TableBody,
 } from "mdbreact";
-import HtmlParser from "react-html-parser";
 
 
 export default function ClassList({ classList }) {

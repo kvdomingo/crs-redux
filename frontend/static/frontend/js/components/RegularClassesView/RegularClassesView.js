@@ -8,6 +8,7 @@ import {
     MDBTableHead as TableHead,
 } from "mdbreact";
 import ClassList from "./ClassList";
+import axiosInstance from "../axios/axiosDefault";
 
 
 export default class RegularClassesView extends Component {
@@ -18,12 +19,12 @@ export default class RegularClassesView extends Component {
     }
 
     componentDidMount() {
-        fetch("/api/academic-years")
-            .then(res => res.json())
-            .then(acadYears => this.setState({
-                acadYears,
-                semester: acadYears[0].id,
-            }));
+        axiosInstance.get("/academic-years")
+            .then(res => this.setState({
+                acadYears: res.data,
+                semester: res.data[0].id,
+            }))
+            .catch(console.log);
     }
 
     handleChange = e => {
@@ -48,9 +49,9 @@ export default class RegularClassesView extends Component {
                 default:
                     semester = "";
             }
-            fetch(`/api/regular-classes/${start_year}/${semester}`)
-                .then(res => res.json())
-                .then(classList => this.setState({ classList }));
+            axiosInstance.get(`/regular-classes/${start_year}/${semester}`)
+                .then(res => this.setState({ classList: res.data }))
+                .catch(console.log);
         }
     }
 

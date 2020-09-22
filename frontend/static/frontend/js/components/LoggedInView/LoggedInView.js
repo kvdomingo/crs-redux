@@ -1,4 +1,4 @@
-import React, {Component, lazy} from "react";
+import React, { Component, lazy } from "react";
 import {
     MDBContainer as Container,
     MDBRow as Row,

@@ -11,33 +11,18 @@ import {
 } from "mdbreact";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { dispatchUserData } from "./redux/userData/userDataActions";
-import axiosInstance from "./axios/axiosDefault";
+import { logoutUser } from "./redux/userData/userDataActions";
 
 
-const mapStateToProps = state => ({
-    userData: state.userData.userData,
-});
+const mapStateToProps = state => ({ ...state.userData });
 
 const mapDispatchToProps = dispatch => ({
-    dispatchUserData: data => dispatch(dispatchUserData(data)),
+    logoutUser: () => dispatch(logoutUser()),
 });
 
 class Navigation extends Component {
     state = {
         isOpen: false,
-    }
-
-    componentDidMount() {
-        axiosInstance.get("/auth/user/current")
-            .then(res => {
-                let { data } = res;
-                this.props.dispatchUserData(data);
-            })
-            .catch(err => {
-                localStorage.removeItem("token");
-                axiosInstance.defaults.headers.Authorization = "JWT ";
-            })
     }
 
     toggleCollapse = () => {
@@ -46,12 +31,12 @@ class Navigation extends Component {
 
     handleLogout = () => {
         localStorage.removeItem("token");
-        this.props.logoutChangeView();
+        this.props.logoutUser();
     }
 
     render() {
         let { userData } = this.props,
-            userStatus = (userData.user_status) ? userData.user_status : [];
+            userStatus = userData.user_status || [];
         return (
             <Navbar dark color="red darken-4" expand="lg" className="kill-shadow">
                 <NavbarBrand>

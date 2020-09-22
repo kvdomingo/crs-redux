@@ -4,12 +4,21 @@ import {
     MDBCard as Card,
     MDBCardBody as CardBody,
 } from "mdbreact";
+import { connect } from "react-redux";
 import PersonalInfo from "./Sections/PersonalInfo";
 import ContactInfo from "./Sections/ContactInfo";
 import FamilyInfo from "./Sections/FamilyInfo";
+import { fetchCurrentUserSuccess } from "../../redux/userData/userDataActions";
+import axiosInstance from "../../axios/axiosDefault";
 
 
-export default class Profile extends Component {
+const mapStateToProps = state => ({ ...state.userData });
+
+const mapDispatchToProps = dispatch => ({
+    fetchCurrentUserSuccess: data => dispatch(fetchCurrentUserSuccess(data)),
+});
+
+class Profile extends Component {
     state = {
         userData: [],
         updateSuccessful: false,
@@ -17,13 +26,14 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-        fetch("/api/auth/user/current", {
-            headers: {
-                Authorization: `JWT ${localStorage.getItem("token")}`,
-            },
-        })
-            .then(res => res.json())
-            .then(userData => this.setState({ userData }));
+        let { userData } = this.props || [];
+        this.setState({ userData });
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.userData !== prevProps.userData) {
+            this.setState({ userData: this.props.userData });
+        }
     }
 
     componentWillUnmount() {
@@ -51,24 +61,17 @@ export default class Profile extends Component {
     handleSubmit = e => {
         e.preventDefault();
         let { userData } = this.state;
-        fetch("/api/auth/user/update", {
-            method: "PATCH",
-            headers: {
-                "Authorization": `JWT ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-        })
-            .then(res => [res.status, res.json()])
+        axiosInstance.patch("/auth/user/update", userData)
             .then(res => {
-                let [status, userData] = res;
-                if (status === 202) {
-                    this.setState({ userData, updateSuccessful: true });
-                    this.notifTimeout = setTimeout(() => this.setState({ updateSuccessful: false }), 5000);
-                } else {
-                    this.setState({ updateFailed: true });
-                    this.notifTimeout = setTimeout(() => this.setState({ updateFailed: false }), 5000);
-                }
+                let { data } = res;
+                this.props.fetchCurrentUserSuccess(data);
+                this.setState({ updateSuccessful: true });
+                this.notifTimeout = setTimeout(() => this.setState({ updateSuccessful: false }), 5000);
+            })
+            .catch(err => {
+                console.log(err.message);
+                this.setState({ updateFailed: true });
+                this.notifTimeout = setTimeout(() => this.setState({ updateFailed: false }), 5000);
             });
     }
 
@@ -101,13 +104,16 @@ export default class Profile extends Component {
                             </section>
 
                             <section>
-                                <div className="note note-success mt-4" hidden={!this.state.updateSuccessful}>
-                                    Changes saved successfully.
-                                </div>
-                                <div className="note note-danger mt-4" hidden={!this.state.updateFailed}>
-                                    An error occurred. Please try again later.
-                                </div>
-
+                                {(this.state.updateSuccessful)
+                                    && <div className="note note-success mt-4">
+                                        Changes saved successfully.
+                                    </div>
+                                }
+                                {(this.state.updateFailed)
+                                    && <div className="note note-danger mt-4">
+                                        An error occurred. Please try again later.
+                                    </div>
+                                }
                                 <div className="text-center">
                                     <input
                                         className="btn btn-primary kill-shadow ml-0 mt-4"
@@ -123,3 +129,5 @@ export default class Profile extends Component {
         );
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

@@ -54,7 +54,7 @@ export default class InfoTabs extends Component {
                         <AnnouncementTab />
                     </TabPane>
                     <TabPane tabId="2" role="tabpanel">
-                        <DelinquenciesTab userData={this.props.userData} />
+                        <DelinquenciesTab />
                     </TabPane>
                 </TabContent>
             </Container>

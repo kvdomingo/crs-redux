@@ -27,6 +27,14 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "prettier": {
+    "arrowParens": "avoid",
+    "quoteProps": "consistent",
+    "semi": true,
+    "singleQuote": false,
+    "tabWidth": 4,
+    "trailingComma": "all"
+  },
   "author": "Kenneth V. Domingo <kvdomingo@up.edu.ph>",
   "license": "ISC",
   "devDependencies": {
@@ -56,7 +64,10 @@
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
+    "prettier": "^2.1.2",
     "prop-types": "^15.7.2",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-logger": "^3.0.6",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
@@ -87,8 +98,6 @@
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
-    "redux-devtools-extension": "^2.13.8",
-    "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0"
   },
   "browserslist": {

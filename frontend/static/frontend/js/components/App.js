@@ -7,12 +7,12 @@ import Navigation from "./Navigation";
 import Footer from "./Footer";
 import Routes from "./Routes";
 import axiosInstance from "./axios/axiosDefault";
+import GlobalStateListener from "./GlobalStateListener";
 
 
 export default class App extends Component {
     state = {
         loggedIn: !!(localStorage.getItem("token")),
-        userData: [],
         currentSemester: [],
     }
 
@@ -35,6 +35,7 @@ export default class App extends Component {
         return (
             <Provider store={store}>
                 <Router>
+                    <GlobalStateListener />
                     <Navigation logoutChangeView={this.logoutChangeView} />
                     <main>
                         <Suspense fallback={<Loading />}>

@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import PropTypes from "prop-types";
 import {
     MDBCard as Card,
     MDBCardHeader as CardHeader,
@@ -11,12 +10,6 @@ import TextField from "../Forms/TextField";
 
 
 export default class PersonalInfo extends Component {
-    static propTypes = {
-        userData: PropTypes.object.isRequired,
-        toggleCheck: PropTypes.func.isRequired,
-        handleChange: PropTypes.func.isRequired,
-    }
-
     render() {
         let { handleChange, toggleCheck, userData } = this.props;
         return (

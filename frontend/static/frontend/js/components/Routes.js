@@ -8,31 +8,30 @@ const LoggedOutView = lazy(() => import("./LoggedOutView/LoggedOutView")),
       RegularClassesView = lazy(() => import("./RegularClassesView/RegularClassesView"));
 
 const mapStateToProps = state => ({
-    userData: state.userData.userData,
+    userData: state.userData,
+    crsData: state.crsData,
 });
 
-function Routes(props) {
+function Routes({ crsData, loggedIn, userData }) {
     return (
         <Switch>
             <Route
                 path="/regular-classes"
                 render={() => (
                     <RegularClassesView
-                        currentSemester={props.currentSemester}
+                        currentSemester={crsData.currentSemester}
                     />
                 )}
             />
             <Route
                 path="/"
                 render={() => (
-                    (props.loggedIn)
+                    (loggedIn)
                         ? <LoggedInView
-                            userData={props.userData}
-                            currentSemester={props.currentSemester}
+                            userData={userData.userData}
+                            currentSemester={crsData.currentSemester}
                         />
-                        : <LoggedOutView
-                            loginChangeView={props.loginChangeView}
-                        />
+                        : <LoggedOutView />
                 )}
             />
             <Route component={Handle404} status={404} />
